@@ -12,7 +12,11 @@ sonic-otn-wg will focus on enabling SONiC to support optical transport equipment
 * Optical line equipment such as optical amplifiers, wavelength selective switches.  
 * Optical DWDM/Grey pluggable modules on switching/routing equipment.
 * Packet-optical device (ex. [Cassini](https://telecominfraproject.com/oopt/)) with both packet and optical functionality (Stretched goal).
-  
+
+<img src="assets/sonic-otn-transponder-open-line-system.png" alt="transponder and open line system with sonic-otn" style="zoom: 50%;" />
+
+<img src="assets/sonic-otn-packet-optical-system.png" alt="packet optical and open line system with sonic-otn" style="zoom: 40%;" />
+
 ### Estimated Duration
 Two years, by  December, 2024
 
