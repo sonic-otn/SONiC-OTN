@@ -32,6 +32,18 @@ With above deliverables, SONiC effectively becomes a network operating system (N
 
 <img src="assets/ot-whitebox.png" alt="optical transport white-box system" style="zoom: 50%;" />
 
+### Supported Optical Device Types
+As there are different types of optical transport devices in optical network, some typical configurations are support as part of this project. Vendors should be able to customize their variations with minimum effort at device level under the same optical platform.
+* Optical Amplifier: A terminal amplifier with protection is a target implementations. Non-protected or in-line amplifier can be customized from it. The optical diagram of termal amplifier is shown as following:
+<img src="assets/ot-protected-amp.png" alt="SONiC for optical transport white-box system" style="zoom: 50%;" />
+
+* 2D-ROADM: Single box support 2 degree ROAMD is another target implementation. High degree ROADM could be formed by multiple 2D-ROADM (disaggregated approach).
+
+<img src="assets/ot-2d-roadm.png" alt="SONiC for optical transport white-box system" style="zoom: 50%;" />
+
+* Transponders:[TBD]
+
+* Optical-packet device: Such as [Cassini](https://cdn.brandfolder.io/D8DI15S7/as/q3wkdg-476u4o-8wg0g7/Cassini_at_a_Glance_-_Telecom_Infra_Project.pdf)
 
 ### High Level Design
 The design objective is to fully inherit existing SONiC architecture and infrastructure and seamlessly extending SONiC implementation with optical features without impacting on current switch platforms. The following diagram shows potential changes at system level. The modifications of existing SONiC are illustrated in red.
