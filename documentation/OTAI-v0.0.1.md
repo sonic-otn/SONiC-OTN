@@ -8,9 +8,9 @@ Accelink:
 Infinera:  
 
 ## List of Changes
-| Version | Changes | Name |
-| :-----| :---- | :----- |
-| V0.0.1 | Initial Draft | Weitang Zheng |
+| Version | Changes | Name | Date |
+| :-----| :---- | :----- | :----- |
+| V0.0.1 | Initial Draft | Weitang Zheng | 2023-7-11 |
 
 
 ## License
@@ -22,6 +22,7 @@ To grow networks at scale to meet unprecedented network traffic demand, optical 
 However, in today’s open and disaggregated optical networks, network equipment is still gray boxes, using proprietary Network Operating Systems (NOS) and hardware modules from equipment vendors. Any bug fix and feature upgrade have to be done by equipment vendors, which slows down technical iteration speed and may not be suitable for today’s network requirements. To solve this problem, we started a white box OTN equipment project and extended SONiC to OTN as an open source NOS for white box OTN equipment. We have launched a new workstream in SONiC community, [SONiC-OTN](https://lists.sonicfoundation.dev/g/sonic-wg-otn) workgroup, to drive the innovation. The initial goal of the workgroup is to extend SONiC to OTN equipment, including transponders/muxponders, optical amplifiers (OAs), optical line protection (OLP), wavelength selective switch (WSS), etc. Optical transport abstraction interfaces (OTAI) are introduced to create a unified and vendor neutral abstraction layer for different optical components.   
   
 Benefitted from SONiC’s disaggregated containerized architecture and rapidly growing ecosystem of hardware and software partners, we foresee the OTAI will accelerate optical hardware innovation, and SONiC-OTN modular design with containers will accelerate software evolution. Many cloud operators, hardware vendors and optic module supplies will benefit from SONiC-OTN work.  
+
 This specification defines an abstraction interface for optical transport linecards with different optical components. The interface is designed to provide a vendor independent way of controlling optical tranport components like optical amplifiers, transceivers, automatic protection switches, wavelength selective switch, etc. in a uniform manner. This specification also allows exposing vendor specific functionalities and extensions to existing features.
 
 ## Intended audience  
@@ -29,15 +30,14 @@ This document is intended primarily for the programmers who plan to use OTAI API
 
 ## High-Level design notes  
 A typical optical transport equipment contains one or two main boards and several optcal linecards. There are different kinds of optical transport linecards in optical networks, and different venders have their private ways to control their optical modules on the linecard hardware. there are different optical components (OP, WSS, OLP, OTDR) and logical components (OCH, OTN, Logical channels, interfaces, LLDP, etc) on different linecards.In a disaggregated linecard whitebox, the challenge is how to abstract these linecards into a unified and standard model.OTAI defines the vendor independent APIs to control and monitoring all kinds of optical linecards in a uniform manner.  
-<img src="../assets/OTAI-architecture.png" alt="OTAI in an optical transport system" style="zoom: 40%;" />
+<img src="../assets/OTAI-architecture.png" alt="OTAI in an optical transport system" style="zoom: 30%;" />
 
 OTAI is based upon the Switch Abstraction Interface or [SAI](https://github.com/opencomputeproject/SAI), which includes C Application Programming Interfaces (APIs) and C headers for different optical modules. 
   
 Adapter is a shared software library, supplied by a linecard vendor, that implements OTAI Specification. It sets up a vendor-specific communication channel with the software that runs upon a linecard.  Adapters are expected to be as simple as possible, ideally simple wrappers around vendor’s SDKs. Our design strives to push the bookkeeping complexity from adapter into the adapter host wherever possible.
   
 The adapter module is loaded into a hosting process (“adapter host”) and then initialized. During
-initialization the adapter initiates discovery process of the specified instance of a optical linecard entity. The
-linecard entity is a top-level object in OTAI.
+initialization the adapter initiates discovery process of the specified instance of a optical linecard entity. The linecard entity is a top-level object in OTAI.
   
 Adapter host is a component that loads Adapter and exposes its functionalities to the Optical Linecard State Service (OLSS) module. There would be multiple Adapter Hosts running at the same time, each optical linecard has one Adapter host. Each Adapter Host is responsible for managing a portion of functions within the linecard. For example, there is a OLP linecard on slot 1, the adapter host for slot 1 is responsible for manage the OLP linecard.
   
@@ -48,7 +48,39 @@ Key assumptions, design decisions and API semantic clarifications:
 - Adapter is not the source of the critical persisted state. It can crash or be shut down and the above stack will be able to recover from such an event.
 
 ## API description  
-TDB  
+Proposed interface is a local interface between the Adapter Host and Adapter. Optical linecard functionality is exposed to the reset of the syste by the Adapter Host through other mechanisims, which are not part of this specification.  
+
+The API is designed to be platform-agnostic(*nix/Windows/etc...). The API is a collection of C-style interfaces exposed from the adapter. The OTAI objects include a group of optical components and logical objects, which are compatible with [OpenConfig](https://www.openconfig.net/).  
+
+The OTAI objects includes:
+| Object | Description | File Name |
+| :------| :---------- | :-------- |
+| Linecard | Optical Transport Linecard | [otailinecard.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otailinecard.h) |
+| Transceiver | Optical Transceiver | [otaitransceiver.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otaitransceiver.h) |
+| Port | Optical transport port | [otaiport.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otaiport.h) |
+| Physical Channel | Physical Channel | [otaiphysicalchannel.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otaiphysicalchannel.h) |
+| Logical Channel | Optical Logical Channel | [otailogicalchannel.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otailogicalchannel.h) |
+| Ethernet | Ethernet | [otaiethernet.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otaiethernet.h) |
+| Assignment | Opctial Assignment | [otaiassignment.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otaiassignment.h) |
+| OTN | OTN protocol | [otaiotn.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otaiotn.h) |
+| OCH | Optical Channel | [otaioch.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otaioch.h) |
+| OA | Optical Amplifier | [otaioa.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otaioa.h) |
+| WSS | Wavelength Selective Switch | [otaiwss.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otaiwss.h) |
+| OMC | Optical Media Channel | [otaimediachannel.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otaimediachannel.h) |
+| OSC | optical service channel | [otaiosc.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otaiosc.h) |
+| Interface | Interface | [otaiinterface.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otaiinterface.h) |
+| LLDP | Link Layer Discovery Protocol | [otailldp.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otailldp.h) |
+| OTDR | Optical Time Domain Reflectometer | [otaiotdr.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otaiotdr.h) |
+| OCM | Optical Channel Monitor | [otaiocm.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otaiocm.h) |
+| VOA | Optical Attenuator | [otaiattenuator.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otaiattenuator.h) |
+| APS | Automatic Protection Switch | [otaiaps.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otaiaps.h) |
+| APS Port | Automatic Protection Switch Port | [otaiapsport.h](https://github.com/zhengweitang-zwt/OTAI/blob/main/inc/otaiapsport.h) |
+
+Here is OTAI objects and hierarchy, the top-level object is the linecard object, which could be a real hardware on multi linecard device, or a logical system on a pizza box. The linecard may contains a set of optical components and logical objects. For instance, an optical transponder and muxponder linecard includes Ports(client and line port), transceivers, and logical objects (logical channels, physical channels, ethernet, OTN, OCH, LLDP, etc). An optical linecard in the line system, it may includes OA, OSC, APS, Attenuators, WSS, Media Channel, OCM, OTDR, Ports, etc.  
+
+<img src="../assets/OTAI-objects-hierarchy.png" alt="OTAI object model and hierarchy" style="zoom: 40%;" />
+
+Each OTAI objects owns a unique object ID (OID) which is assigned by OTAI library. Each OTAI object has a set of attributes and statistics which are compatible with OpenConfig definitions, and a set of CRUD (Create/Read/Update/Delete) APIs. With these standard OTAI APIs and unique OID, the adapter host can manage all kinds of optical transport components from different vendors.
 
 ## Adapter startup/shutdown sequence  
 TDB  
@@ -534,7 +566,7 @@ TDB
 
 
 
-## Optical logical Channel (otailogicalchannel.h)  
+## Optical Logical Channel (otailogicalchannel.h)  
 |Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
 |:----|:----|:----|:----|:----|:----|:----|
 |logicalchannel|OTAI_LOGICALCHANNEL_ATTR_CHANNEL_ID|otai_uint32_t|CREATE_ONLY| | | |
@@ -755,10 +787,6 @@ TDB
 | |OTAI_ATTENUATOR_STAT_OUTPUT_POWER_TOTAL|otai_double_t|R|precision2|dBm|gauge|
 | |OTAI_ATTENUATOR_STAT_OPTICAL_RETURN_LOSS|otai_double_t|R|precision2|dBm|gauge| | |
 
-
-## Transceiver functionality (otaitransceiver.h)  
-
-
 ## Opctial Assignment functionality (otaiassignment.h)  
 
 |Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
@@ -775,7 +803,7 @@ TDB
 
 
 
-## Automatic protection switch functionality (otaiaps.h)  
+## Automatic Protection Switch functionality (otaiaps.h)  
 
 |Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
 |:---|:---|:---|:---|:---|:---|:---|
@@ -794,7 +822,7 @@ TDB
 | |OTAI_APS_ATTR_SOFTWARE_VERSION|char|R| | | |
 | |OTAI_APS_ATTR_FIRMWARE_VERSION|char|R| | | |
 
-## Automatic protection switch port functionality (otaiapsport.h)  
+## Automatic Protection Switch Port functionality (otaiapsport.h)  
 
 |Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
 |:---|:---|:---|:---|:---|:---|:---|
