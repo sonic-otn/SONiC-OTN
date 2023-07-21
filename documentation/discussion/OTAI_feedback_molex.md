@@ -6,7 +6,7 @@ SAI abstracts packet switching functions of switch ASIC and it does not include 
 
 In SONiC all generic hardware and operation are managed by pmon container not syncd (SAI) container. The following diagram illustrates the functional demarcation between syncd and pmon container. 
 
-![alt text](https://github.com/jjin62/SONiC-OTN/blob/jjin/assets/pmon-vs-syncd.png?raw=true)
+<img src="../../assets/pmon-vs-syncd.png" alt="SONiC for optical transport white-box system" style="zoom: 50%;" />
 
 Generic hardware info in OTAI:
 - MFG_NAME; MFG_DATE; SERIAL_NO; PART_NO; HARDWARE_VERSION; SOFTWARE_VERSION; FIRMWARE_VERSION; CLEI_CODE; VENDOR_PART; VENDOR_REV. 
