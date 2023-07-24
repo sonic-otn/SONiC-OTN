@@ -53,6 +53,13 @@ In this approach, original SAI, swss and sairedis is modified to support OTN fun
 - created a parallel code base of SONiC infrastructure (scripts, utilities, data types, meta, code generation, etc.). This would make maintenance(continuously sync with upstream SONiC) a big effort.
 - Potential support for packet-optical device is not feasible. 
 
+<b>Option 1 evolution plan proposal:</b>
+
+ Since we copied the SONiC infrastructure in ot-Syncd and OTAI in Option 1,  we can make these SONiC infrastructures as a common library.  mgmt-common, swss-common, pmon-common are common libraries in SONiC if more applications start to share these common libraries. It might be the first a new application start to share the SAI infrastructure and Syncd infrastructure, we can generate Syncd-common and SAI-common at day two when most infrastructure utilities are the same as SONiC's.
+In most of time, developers are working on the OTN and Switch application layer instead of infrastructure (compared SWSS with SWSS-common).  We may avoid mixing the OTN and switch application service together in the same docker, in order to reusing these infrastructure.
+
+<img src="../assets/arch-option1-evol.png" alt="SONiC for optical transport white-box system" style="zoom: 40%;" />
+
 ### Option 2: OTN Functions in Existing Containers
 This option is proposed by Molex team based on deep dive studying of existing SONiC design and implementation, as well as extensive prototyping.
 
