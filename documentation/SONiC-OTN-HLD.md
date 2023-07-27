@@ -38,6 +38,12 @@ In addition, an optical application container will be added to host optical moni
 ## Design Options
 The sonic-otn HLD is still under review and discussion. There are three options presented so far. Here are the brief description of these three architectural options. The optical service related modules are the focus here, as the core part of optical NOS is to manage and control optical service. Network service core modules are SAI, swss, redis DB and syncd in SONiC. Related repos are ``sonic-swss, SAI and sonic-sairedis``. On theother hand, enhancement on NBI and generic hardware management, ``sonic-mgmt-framework, sonic-mgmt-common, sonic-platform-daemon, sonic-platform-common``, are relatively straight forward and can be discussed later.
 
+To provide some background for discussion, the following diagram illustrats existing SONiC core containers to support packet switching functionality.
+
+<img src="../assets/arch-option-sonic.png" alt="SONiC for optical transport white-box system" style="zoom: 40%;" />
+
+Please note that SAI API is implemented in both swss and syncd containers and the south bound interface(SBI) is conceptually provided by SAI in swss container, which updates Flex-counter DB and ASIC DB. By subscribing Flex-couter DB and ASIC DB changes, syncd will call invloking vendor SAI implementaion to communicate to hardware/ASIC.
+
 ### Option 1: New OTN Containers
 Current sonic-otn implementation contributed by ALI/Accelink.
 
@@ -53,10 +59,11 @@ In this approach, original SAI, swss and sairedis is modified to support OTN fun
 - created a parallel code base of SONiC infrastructure (scripts, utilities, data types, meta, code generation, etc.). This would make maintenance(continuously sync with upstream SONiC) a big effort.
 - Potential support for packet-optical device is not feasible. 
 
-<b>Option 1 evolution plan proposal:</b>
+<b>Option 1 Evolution plan proposal:</b>
 
- Since we copied the SONiC infrastructure in ot-Syncd and OTAI in Option 1,  we can make these SONiC infrastructures as a common library.  mgmt-common, swss-common, pmon-common are common libraries in SONiC if more applications start to share these common libraries. It might be the first a new application start to share the SAI infrastructure and Syncd infrastructure, we can generate Syncd-common and SAI-common at day two when most infrastructure utilities are the same as SONiC's.
-In most of time, developers are working on the OTN and Switch application layer instead of infrastructure (compared SWSS with SWSS-common).  We may avoid mixing the OTN and switch application service together in the same docker, in order to reusing these infrastructure.
+On syncd side, since we copied the SONiC infrastructure in ot-Syncd and OTAI in Option 1, we can make these SONiC infrastructures as a common library.  mgmt-common, swss-common, pmon-common are common libraries in SONiC if more applications start to share these common libraries. It might be the first a new application start to share the SAI infrastructure and Syncd infrastructure, we can generate Syncd-common and SAI-common at day two when most infrastructure utilities are the same as SONiC's.
+
+On the swss side, SONiC already separated infrastructure (swss-common lib) from the business-logic (swss). In most of time, developers are working on the OTN and Switch application layer instead of infrastructure (compared SWSS with SWSS-common).  We may avoid mixing the OTN and switch application service together in the same docker, in order to reusing these infrastructure. New olss container code mostly are business logic for OTN. Limited code duplication between swss and olss is worth to achieve a clear separation of switching and OTN functionality.
 
 <img src="../assets/arch-option1-evol.png" alt="SONiC for optical transport white-box system" style="zoom: 40%;" />
 
@@ -69,21 +76,36 @@ In this approach, original SAI, swss and sairedis are retained and unchanged. OT
 
 <b>pros</b>:
 - Total transparent (no impact) for the existing switching platform, as the OTN code will not included in the image building.
-- Since there are no duplicated code from existing SONiC code base, no on-going maintenance is needed, as upstream SONiC involving. 
+- Since there are no duplicated code from existing SONiC code base, no on-going maintenance is needed, as upstream SONiC evolving. 
 - set up a good base to support potential optical-packet device.
 
 <b>cons</b>: 
-- Compile time and run time dynamic behavior support need to be well designed and implemented. Certain technical risk exists. However, initial prototyping is promising that this approach would work.
+- Compile time and run time dynamic behavior has certain technical risk, which has been reduced with some prototyping.
+- For OTN platform, existing business logic code for packet switching is not used but is included the image.
 
 ### Option 3: New OTN Containers and Existing Containers
 In this approach proposed by Infinera team, two new containers (olss, ot-syncd) are added while original swss and syncd for packet switch are retained at runtime. Also a new optical-DB is introduced to store optical info (equivalent to asic-DB).
 
 <img src="../assets/arch-option3-infinera.png" alt="SONiC for optical transport white-box system" style="zoom: 40%;" />
 
+Assume that olss and ot-syncd are same as in option 1. The difference is this option uses new optical-DB, instead of ASIC-DB, for OTN.
+
 <b>pros</b>:
 - Total separation of OTN (code base and runtime container) from existing switching platform. 
 - As switching features are available all the time optical-packet device can be easily supported. 
 
 <b>cons</b>: 
-- New container implementation still need to copy original swss, sairedis code, unless a totally new code is developed. On-going the maintenance is needed to sync with upstream SONiC changes.
-- Technical risk: The current SONiC architecture does not support two swss and syncd container. For example, there can not be two syncd listening on tables in Flexcounter DB. Also for OTN devices, we still need vendor sai implemented (maybe a dummy one). Otherwise, swss and syncd won't be running properly.
+- Same issue of duplicated code as in option 1. 
+- Technical risk: (more investigation and prototyping are needed)
+  - The current SONiC architecture does not support two swss and syncd container. 
+  - For OTN devices, A dummy vendor sai need to be implemented. 
+
+### Discussions
+Option 1 and 3 are very close, except:
+- Option 3 bring up original swss and synd containers.
+- Option 3 added a new optical-DB.
+
+Option 1 and 2 would converge eventually:
+- Option 2 is designed to seamlessly extend SONiC with no duplicated infrastructure.
+- In Option 1 Day 2 architecture, the same could be largely achieve, except common code between olss and swss.
+- 
