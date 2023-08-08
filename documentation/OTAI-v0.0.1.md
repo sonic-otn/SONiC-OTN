@@ -23,13 +23,13 @@ However, in today’s open and disaggregated optical networks, network equipment
   
 Benefitted from SONiC’s disaggregated containerized architecture and rapidly growing ecosystem of hardware and software partners, we foresee the OTAI will accelerate optical hardware innovation, and SONiC-OTN modular design with containers will accelerate software evolution. Many cloud operators, hardware vendors and optic module supplies will benefit from SONiC-OTN work.  
 
-This specification defines an abstraction interface for optical transport linecards with different optical components. The interface is designed to provide a vendor independent way of controlling optical tranport components like optical amplifiers, transceivers, automatic protection switches, wavelength selective switch, etc. in a uniform manner. This specification also allows exposing vendor specific functionalities and extensions to existing features.
+This specification defines an abstraction interface for optical transport linecards with different optical components. The interface is designed to provide a vendor independent way of controlling optical transport components like optical amplifiers, transceivers, automatic protection switches, wavelength selective switch, etc. in a uniform manner. This specification also allows exposing vendor specific functionalities and extensions to existing features.
 
 ## Intended audience  
 This document is intended primarily for the programmers who plan to use OTAI API or develop OTAI extensions.
 
 ## High-Level design notes  
-A typical optical transport equipment contains one or two main boards and several optcal linecards. There are different kinds of optical transport linecards in optical networks, and different venders have their private ways to control their optical modules on the linecard hardware. there are different optical components (OP, WSS, OLP, OTDR) and logical components (OCH, OTN, Logical channels, interfaces, LLDP, etc) on different linecards.In a disaggregated linecard whitebox, the challenge is how to abstract these linecards into a unified and standard model.OTAI defines the vendor independent APIs to control and monitoring all kinds of optical linecards in a uniform manner.  
+A typical optical transport equipment contains one or two main boards and several optical linecards. There are different kinds of optical transport linecards in optical networks, and different venders have their private ways to control their optical modules on the linecard hardware. there are different optical components (OP, WSS, OLP, OTDR) and logical components (OCH, OTN, Logical channels, interfaces, LLDP, etc) on different linecards.In a disaggregated linecard whitebox, the challenge is how to abstract these linecards into a unified and standard model.OTAI defines the vendor independent APIs to control and monitoring all kinds of optical linecards in a uniform manner.  
 <img src="../assets/OTAI-architecture.png" alt="OTAI in an optical transport system" style="zoom: 30%;" />
 
 OTAI is based upon the Switch Abstraction Interface or [SAI](https://github.com/opencomputeproject/SAI), which includes C Application Programming Interfaces (APIs) and C headers for different optical modules. 
@@ -48,7 +48,7 @@ Key assumptions, design decisions and API semantic clarifications:
 - Adapter is not the source of the critical persisted state. It can crash or be shut down and the above stack will be able to recover from such an event.
 
 ## API description  
-Proposed interface is a local interface between the Adapter Host and Adapter. Optical linecard functionality is exposed to the reset of the syste by the Adapter Host through other mechanisims, which are not part of this specification.  
+Proposed interface is a local interface between the Adapter Host and Adapter. Optical linecard functionality is exposed to the rest of the system by the Adapter Host through other mechanisms, which are not part of this specification.  
 
 The API is designed to be platform-agnostic(*nix/Windows/etc...). The API is a collection of C-style interfaces exposed from the adapter. The OTAI objects include a group of optical components and logical objects, which are compatible with [OpenConfig](https://www.openconfig.net/).  
 
@@ -83,20 +83,57 @@ Here is OTAI objects and hierarchy, the top-level object is the linecard object,
 Each OTAI objects owns a unique object ID (OID) which is assigned by OTAI library. Each OTAI object has a set of attributes and statistics which are compatible with OpenConfig definitions, and a set of CRUD (Create/Read/Update/Delete) APIs. With these standard OTAI APIs and unique OID, the adapter host can manage all kinds of optical transport components from different vendors.
 
 ## Adapter startup/shutdown sequence  
-TDB  
+Adapter Host has to load the information about OTAI adapter module during startup. After adapter module load, adapter host acquire three well-known functions addresses: otai_api_initialize(), otai_api_query() and otai_api_uninitialize().  
+
+After the otai_api_initialize() is called, the function is supplied with method table of services provided by the adapter host to adapter module. These services allow the adapter to initialize any data, control structures that may be necessary during subsequent OTAI operations. Note: SDK initialization should NOT be performed here. This function is just take care of any platform-specific difference related to module loading, and generally should be very simple.  
+
+After initialization, otai_api_query()can be used for retrieval of various methods tables for OTAI functionalities. Once all the functionalities being retrieved, adapter host has all OTAI objects CRUD APIs.
+For example, the first method that Adapter hosts is `otai_create_linecard_fn` which create the top otai object and return the linecard object ID to the Adapter host. Then Adapter host can create all the other sub-components (Ports, OAs, OLP, VOA, etc) in this linecard with the same linecard object ID. 
+Once the linecard and its sub-components are created, Adapter host be able to retrieve all the statistic and status with the API `lai_get_**_attribute_fn` and `lai_get_**_stats_fn`, set these optical components' attributes with the API `lai_set_**_attribute_fn`.  
 
 ## Data Types (otaitypes.h)  
-TDB  
+OTAI defines a group of basic data types for different kinds attributes data type.
+|  |  | 
+| :-----| :----  |
+| otai_uint64_t  | otai_int64_t | 
+| otai_uint32_t  | otai_int32_t | 
+| otai_uint16_t  | otai_int16_t | 
+| otai_uint8_t   | otai_int8_t  | 
+| otai_double_t  | otai_float_t  | 
+| otai_size_t    | otai_object_id_t  | 
+| otai_pointer_t |   | 
+
+OTAI also defines some OTN specific structure and enumeration types.
+|  |  | 
+| :-----| :----  |
+| lai_spectrum_power_t  | the spectrum power for a optical channel, it includes the lower frequency, upper frequency and optical power | 
+| lai_oper_status_t  | defines the operational status of a module or a port | 
+| lai_admin_status_t  | defines the administrative status of a module or a port |
+| lai_port_type_t  | defines different kinds of port types. an optical module's port is unidirectional, it includes the input port and output port.  |
+| lai_otdr_event_type_t  | defines different kinds of OTDR event types.  |
+| lai_otdr_event_t  | defines the OTDR event information which includes event distance, loss, refection, etc.  |
+| lai_otdr_scanning_profile_t  | defines the OTDR scanning profile information which includes scan time, distance range, pulse width, average time, output frequency etc.  |
+| lai_alarm_type_t  | defines all the alarms create by an optical component or modules. |
+| lai_alarm_status_t  | defines the alarm status, including active, inactive, transient |
+| lai_alarm_severity_t  | defines the alarm severity, including minor, warning, major, critical, cleared, not_report, not_alarmed |
 
 ## Status Types (otaistatus.h)  
-TDB  
-
-
-## Functionality query (otai.h)  
-TDB  
+List of status codes returned from the OTAI methods. In case the CRUD APIs call fails due to errors, such as invalid attribute, unsupported attributes, otaistatus.h allows the return code to convey the error. 
 
 ## Optical Transport Linecard functionality (otailinecard.h)  
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+Linecard is the top module in OTAI. It defines a group of attributes and some statistics. In these attributes, it includes the inventory information (PN, SN, Versions, etc), temperature threshold, LED state, software upgrading attributes, and notification callback functions: 
+* OTAI_LINECARD_ATTR_LINECARD_ALARM_NOTIFY, it will notify the adapter host there was an alarm created or cleared
+* OTAI_LINECARD_ATTR_LINECARD_OCM_SPECTRUM_POWER_NOTIFY, it will notify the adapter host that the OCM scanning is done
+* OTAI_LINECARD_ATTR_LINECARD_OTDR_RESULT_NOTIFY, it will notify the adapter host that the OTDR scanning is done
+* OTAI_LINECARD_ATTR_LINECARD_STATE_CHANGE_NOTIFY, it will notify the adapter host that the linecard state is changed, for example, the linecard start initialization, state is ready, start to reboot.
+
+Once a linecard is created, the adapter returns this linecard's OID. Adapter host can get linecard attributes and statistics  and create the other submodules in the linecard with this OID. You can find the input attribute `linecard_id` from the other submodules' create APIs. 
+
+The R/W column indicates an attribute is READABLE, WRITABLE and CREATE_ONLY. If an attribute is CREATE_ONLY, it can assign value in the create API. Adapter host can set an attribute if it is WRITABLE. Adapter
+
+There are two types for a statistic, gauge and counter. If an statistic PM type is gauge, the adapter host can use this annotation to distinguish different type of statistic, and apply different PM accumulation rule.
+
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:----|:----|:----|:----|:----|:----|:----|
 |linecard|OTAI_LINECARD_ATTR_LINECARD_TYPE|char|RW| | | |
 | |OTAI_LINECARD_ATTR_ADMIN_STATE|otai_admin_state_t|RW| | | |
@@ -159,7 +196,9 @@ TDB
 
 
 ## Wavelength Selective Switch functionality (otaiwss.h)  
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+Wavelength Selective Switch is a submodule in a linecard. OTAI defines the inventory information for a WSS module. The media channel in a WSS is defined in the [OMC](#optical-media-channel-functionality-otaimediachannelh).
+
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:----|:----|:----|:----|:----|:----|:----|
 |wss|OTAI_WSS_ATTR_ID|otai_uint32_t|CREATE_ONLY| | | |
 | |OTAI_WSS_ATTR_SERIAL_NO|char|R| | | |
@@ -174,7 +213,9 @@ TDB
 
 
 ## Transceiver functionality (otaitransceiver.h)  
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+Transceiver is a submodule in a linecard. OTAI defines the inventory information, statistics, alarm thresholds, upgrading attributes, etc.
+
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:----|:----|:----|:----|:----|:----|:----|
 |transceiver|OTAI_TRANSCEIVER_ATTR_PORT_TYPE|otai_port_type_t|CREATE_ONLY| | | |
 | |OTAI_TRANSCEIVER_ATTR_PORT_ID|otai_uint32_t|CREATE_ONLY| | | |
@@ -279,7 +320,9 @@ TDB
 
 
 ## Optical transport port functionality (otaiport.h)  
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+Optical transport port is a submodule in a linecard, it could be an port on the front panel (Client port, line port) or an internel port (EDFA_IN, OLP_COMMON_IN, etc). OTAI defines the inventory information, statistics, alarm thresholds etc.
+
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:----|:----|:----|:----|:----|:----|:----|
 |port|OTAI_PORT_ATTR_PORT_TYPE|otai_port_type_t|CREATE_ONLY| | | |
 | |OTAI_PORT_ATTR_PORT_ID|otai_uint32_t|CREATE_ONLY| | | |
@@ -307,8 +350,10 @@ TDB
 | |OTAI_PORT_STAT_OSC_OUTPUT_POWER|otai_double_t|R|precision2|dBm|gauge|
 
 
-## Physical Channel functionality (otaiphysicalchannel.h)  
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+## Physical Channel functionality (otaiphysicalchannel.h) 
+Physical channel is a physical lane or channel in the physical client port.  Each physical client port has 1 or more channels. An example is 100GBASE-LR4 client physical port having 4x25G channels. OTAI defines the tx-laser, output frequency, output power, inport power and laser bias-current.
+
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:----|:----|:----|:----|:----|:----|:----|
 |physicalchannel|OTAI_PHYSICALCHANNEL_ATTR_PORT_TYPE|otai_port_type_t|CREATE_ONLY| | | |
 | |OTAI_PHYSICALCHANNEL_ATTR_PORT_ID|otai_uint32_t|CREATE_ONLY| | | |
@@ -320,8 +365,10 @@ TDB
 | |OTAI_PHYSICALCHANNEL_STAT_LASER_BIAS_CURRENT|otai_double_t|R|precision2| |gauge|
 
 
-## OTN protocol functionality (otaiotn.h)  
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+## OTN protocol functionality (otaiotn.h) 
+OTN is the definition for data related to OTN protocol framing when logical channel framing is using OTU protocal. OTAI defines OTN's attributes and statictics.
+
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:----|:----|:----|:----|:----|:----|:----|
 |otn|OTAI_OTN_ATTR_CHANNEL_ID|otai_uint32_t|CREATE_ONLY| | | |
 | |OTAI_OTN_ATTR_TTI_MSG_TRANSMIT|char|RW| | | |
@@ -356,7 +403,9 @@ TDB
 
 
 ## Optical Time Domain Reflectometer functionality (otaiotdr.h)  
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+OTDR is a submodule in a linecard, OTAI defines the inventory information, scaning profile, threshold, etc.
+
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:----|:----|:----|:----|:----|:----|:----|
 |otdr|OTAI_OTDR_ATTR_ID|otai_uint32_t|CREATE_ONLY| | | |
 | |OTAI_OTDR_ATTR_REFRACTIVE_INDEX|otai_double_t|RW| | | |
@@ -391,7 +440,9 @@ TDB
 
 
 ## Optical Supervisory channel  functionality (otaiosc.h)  
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+OSC is a submodule in a linecard, OTAI defines the inventory information, alarm threshold, statistics etc.
+
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:----|:----|:----|:----|:----|:----|:----|
 |osc|OTAI_OSC_ATTR_ID|otai_uint32_t|CREATE_ONLY| | | |
 | |OTAI_OSC_ATTR_REMOVABLE|bool|R| | | |
@@ -428,7 +479,9 @@ TDB
 
 
 ## Optical Channel Monitor functionality (otaiocm.h)  
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+OCM is a submodule in a linecard, OTAI defines the inventory information, frequency grid, scan trigger, insertion loss to the panel etc.
+
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:----|:----|:----|:----|:----|:----|:----|
 |ocm|OTAI_OCM_ATTR_ID|otai_uint32_t|CREATE_ONLY| | | |
 | |OTAI_OCM_ATTR_SCAN|bool|W| | | |
@@ -447,7 +500,9 @@ TDB
 
 
 ## Optical Channel functionality (otaioch.h)  
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+Optical Channel is a submodule in a linecard, OTAI defines the optical channel's frequency, target power attributes and statistics, such as the OSNR, SOP, output power, frequency, etc.
+
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:----|:----|:----|:----|:----|:----|:----|
 |och|OTAI_OCH_ATTR_PORT_TYPE|otai_port_type_t|CREATE_ONLY| | | |
 | |OTAI_OCH_ATTR_PORT_ID|otai_uint32_t|CREATE_ONLY| | | |
@@ -475,7 +530,9 @@ TDB
 
 
 ## Optical Amplifier functionality (otaioa.h)  
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+Optical amplifier is a submodule in a linecard, OTAI defines amplifier's inventory information, gain, tilt, APR (Automatic Power Reduction) attributes, alarm thresholds, and statistics, such as the input and output power, etc.
+
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 |oa|OTAI_OA_ATTR_ID|otai_uint32_t|CREATE_ONLY| | | |
 | |OTAI_OA_ATTR_EMPTY|bool|R| | | |
@@ -545,7 +602,9 @@ TDB
 
 
 ## Optical Media Channel functionality (otaimediachannel.h)  
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+Optical Media Channel is a submodule in a linecard, OTAI defines media channel's frequency, control mode, source port and destination port, attenuation value, input and output power, etc.
+
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:----|:----|:----|:----|:----|:----|:----|
 |mediachannel|OTAI_MEDIACHANNEL_ATTR_ID|otai_uint32_t|CREATE_ONLY| | | |
 | |OTAI_MEDIACHANNEL_ATTR_LOWER_FREQUENCY|otai_uint64_t|RW| | | |
@@ -567,7 +626,9 @@ TDB
 
 
 ## Optical Logical Channel (otailogicalchannel.h)  
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+Optical Logical Channel is a submodule in a linecard, it represents a logical grouping of logical grooming elements, for example, an ODU/OTU logical packing of the client data on the line side. OTAI defines the loopback mode, test signals, link up delay and link down delay attributes for an optical logical channel. 
+
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:----|:----|:----|:----|:----|:----|:----|
 |logicalchannel|OTAI_LOGICALCHANNEL_ATTR_CHANNEL_ID|otai_uint32_t|CREATE_ONLY| | | |
 | |OTAI_LOGICALCHANNEL_ATTR_LOGICAL_CHANNEL_TYPE|otai_logicalchannel_type_t|RW| | | |
@@ -589,7 +650,9 @@ TDB
 
 
 ## Link Layer Discovery Protocol functionality (otailldp.h)  
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+LLDP is a submodule in a linecard, OTAI defines the neighbor information and the LLDP configurations. 
+
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:----|:----|:----|:----|:----|:----|:----|
 |lldp|OTAI_LLDP_ATTR_CHANNEL_ID|otai_uint32_t|CREATE_ONLY| | | |
 | |OTAI_LLDP_ATTR_ENABLED|bool|RW| | | |
@@ -609,7 +672,9 @@ TDB
 
 
 ## Interface functionality (otaiinterface.h)  
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+Interface is a submodule in a linecard, it represents an network interface and subinterface, for example, the OSC interface. OTAI defines the interface information and the interface packet statistics.
+
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:----|:----|:----|:----|:----|:----|:----|
 |interface|OTAI_INTERFACE_ATTR_INTERFACE_TYPE|otai_interface_type_t|CREATE_ONLY| | | |
 | |OTAI_INTERFACE_ATTR_INTERFACE_ID|otai_uint32_t|CREATE_ONLY| | | |
@@ -662,7 +727,9 @@ TDB
 
 
 ## Ethernet functionality (otaiethernet.h)  
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+Ethernet is a submodule in a linecard, it represents an ethernet interfaces, for example, the client ethernet interface on transponder's client port. OTAI defines the ethernet information and frames statistics.
+
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:----|:----|:----|:----|:----|:----|:----|
 |ethernet|OTAI_ETHERNET_ATTR_CHANNEL_ID|otai_uint32_t|CREATE_ONLY| | | |
 | |OTAI_ETHERNET_ATTR_CLIENT_ALS|otai_ethernet_client_als_t|RW| | | |
@@ -772,8 +839,9 @@ TDB
 
 
 ## Optical Attenuator functionality (otaiattenuator.h)  
+Optical Attenuator is a submodule in a linecard, OTAI defines a VOA's configurations, status, and statistics. 
 
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:----|:----|:----|:----|:----|:----|:----|
 |attenuator|OTAI_ATTENUATOR_ATTR_ID|otai_uint32_t|CREATE_ONLY| | | |
 | |OTAI_ATTENUATOR_ATTR_ATTENUATION_MODE|otai_attenuator_attenuation_mode_t|RW| | | |
@@ -788,8 +856,9 @@ TDB
 | |OTAI_ATTENUATOR_STAT_OPTICAL_RETURN_LOSS|otai_double_t|R|precision2|dBm|gauge| | |
 
 ## Opctial Assignment functionality (otaiassignment.h)  
+Optical Assignment is a submodule in a linecard, the assignment consists of a pointer to logical channel in the next stage, or to an optical channel. OTAI defines an assignment's status. 
 
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:----|:----|:----|:----|:----|:----|:----|
 |assignment|OTAI_ASSIGNMENT_ATTR_CHANNEL_ID|otai_uint32_t|CREATE_ONLY| | | |
 | |OTAI_ASSIGNMENT_ATTR_ID|otai_uint32_t|CREATE_ONLY| | | |
@@ -804,8 +873,9 @@ TDB
 
 
 ## Automatic Protection Switch functionality (otaiaps.h)  
+Automatic Protection Switch (APS) is a submodule in a linecard, OTAI defines a APS's inventory information and status. 
 
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:---|:---|:---|:---|:---|:---|:---|
 |aps|OTAI_APS_ATTR_ID|otai_uint32_t|CREATE_ONLY| | | |
 | |OTAI_APS_ATTR_EMPTY|bool|R| | | |
@@ -823,8 +893,9 @@ TDB
 | |OTAI_APS_ATTR_FIRMWARE_VERSION|char|R| | | |
 
 ## Automatic Protection Switch Port functionality (otaiapsport.h)  
+Automatic Protection Switch Port(APS port) is a submodule in a linecard, OTAI defines a APS port's confiurations, status and statistics. 
 
-|Object|Atrribute|Type|R/W|Precision|Unit|PM-Type|
+|Object|Attribute|Type|R/W|Precision|Unit|PM-Type|
 |:---|:---|:---|:---|:---|:---|:---|
 |apsport|OTAI_APSPORT_ATTR_ID|otai_uint32_t|CREATE_ONLY| | | |
 | |OTAI_APSPORT_ATTR_PORT_TYPE|otai_apsport_port_type_t|CREATE_ONLY| | | |
