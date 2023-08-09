@@ -89,7 +89,7 @@ After the otai_api_initialize() is called, the function is supplied with method 
 
 After initialization, otai_api_query()can be used for retrieval of various methods tables for OTAI functionalities. Once all the functionalities being retrieved, adapter host has all OTAI objects CRUD APIs.
 For example, the first method that Adapter hosts is `otai_create_linecard_fn` which create the top otai object and return the linecard object ID to the Adapter host. Then Adapter host can create all the other sub-components (Ports, OAs, OLP, VOA, etc) in this linecard with the same linecard object ID. 
-Once the linecard and its sub-components are created, Adapter host be able to retrieve all the statistic and status with the API `lai_get_**_attribute_fn` and `lai_get_**_stats_fn`, set these optical components' attributes with the API `lai_set_**_attribute_fn`.  
+Once the linecard and its sub-components are created, Adapter host be able to retrieve all the statistic and status with the API `otai_get_**_attribute_fn` and `otai_get_**_stats_fn`, set these optical components' attributes with the API `otai_set_**_attribute_fn`.  
 
 ## Data Types (otaitypes.h)  
 OTAI defines a group of basic data types for different kinds attributes data type.
@@ -106,16 +106,16 @@ OTAI defines a group of basic data types for different kinds attributes data typ
 OTAI also defines some OTN specific structure and enumeration types.
 |  |  | 
 | :-----| :----  |
-| lai_spectrum_power_t  | the spectrum power for a optical channel, it includes the lower frequency, upper frequency and optical power | 
-| lai_oper_status_t  | defines the operational status of a module or a port | 
-| lai_admin_status_t  | defines the administrative status of a module or a port |
-| lai_port_type_t  | defines different kinds of port types. an optical module's port is unidirectional, it includes the input port and output port.  |
-| lai_otdr_event_type_t  | defines different kinds of OTDR event types.  |
-| lai_otdr_event_t  | defines the OTDR event information which includes event distance, loss, refection, etc.  |
-| lai_otdr_scanning_profile_t  | defines the OTDR scanning profile information which includes scan time, distance range, pulse width, average time, output frequency etc.  |
-| lai_alarm_type_t  | defines all the alarms create by an optical component or modules. |
-| lai_alarm_status_t  | defines the alarm status, including active, inactive, transient |
-| lai_alarm_severity_t  | defines the alarm severity, including minor, warning, major, critical, cleared, not_report, not_alarmed |
+| otai_spectrum_power_t  | the spectrum power for a optical channel, it includes the lower frequency, upper frequency and optical power | 
+| otai_oper_status_t  | defines the operational status of a module or a port | 
+| otai_admin_status_t  | defines the administrative status of a module or a port |
+| otai_port_type_t  | defines different kinds of port types. an optical module's port is unidirectional, it includes the input port and output port.  |
+| otai_otdr_event_type_t  | defines different kinds of OTDR event types.  |
+| otai_otdr_event_t  | defines the OTDR event information which includes event distance, loss, refection, etc.  |
+| otai_otdr_scanning_profile_t  | defines the OTDR scanning profile information which includes scan time, distance range, pulse width, average time, output frequency etc.  |
+| otai_alarm_type_t  | defines all the alarms create by an optical component or modules. |
+| otai_alarm_status_t  | defines the alarm status, including active, inactive, transient |
+| otai_alarm_severity_t  | defines the alarm severity, including minor, warning, major, critical, cleared, not_report, not_alarmed |
 
 ## Status Types (otaistatus.h)  
 List of status codes returned from the OTAI methods. In case the CRUD APIs call fails due to errors, such as invalid attribute, unsupported attributes, otaistatus.h allows the return code to convey the error. 
