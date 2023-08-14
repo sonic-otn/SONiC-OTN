@@ -108,4 +108,30 @@ Option 1 and 3 are very close, except:
 Option 1 and 2 would converge eventually:
 - Option 2 is designed to seamlessly extend SONiC with no duplicated infrastructure.
 - In Option 1 Day 2 architecture, the same could be largely achieve, except common code between olss and swss.
-- 
+
+## SONiC Containers
+As SONiC OTN does not need many switching features, some docker containers are not used in SONiC OTN platforms. The following table listed changes required by OTN at container level. As most switch features are disabled, SONiC OTN is consider as light weight SONiC.
+  
+| Container/Feature Name | Is Enabled? |
+| ---------------------- | ----------- |
+| SNMP                   | Yes         |
+| Resttapi               | Yes         |
+| Telemetry              | Yes         |
+| Database               | Yes         |
+| Pmon                   | Yes         |
+| Config-engine          | Yes         |
+| Mgmt                   | Modify      |
+| Syncd                  | Modify(ot-syncd) |
+| Swss                   | Modify(olss)|
+| LLDP                   | Optional    |
+| BGP                    | Optional    |
+| Teamd                  | No          |
+| Nat                    | No          |
+| Sflow                  | No          |
+| DHCP Relay             | No          |
+| Radv                   | No          |
+| Macsec                 | No          |
+| Mux                    | No          |
+| PDE                    | No          |
+| ICCPD                  | No          |
+| P4RT                   | No          |
