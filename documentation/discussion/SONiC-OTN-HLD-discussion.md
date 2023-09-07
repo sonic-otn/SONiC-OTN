@@ -1,13 +1,13 @@
 
-# sonic-otn High Level Design (in progress)
+# sonic-otn HLD Discussion
 
 ## Supported Optical Device Types
 As there are different types of optical transport devices in optical network, some typical configurations are support as part of this project. Vendors should be able to customize their variations with minimum effort at device level under the same optical platform.
 * Optical Amplifier: A terminal amplifier with protection is a target implementations. Non-protected or in-line amplifier can be customized from it. The optical diagram of terminal amplifier is shown as following:
-<img src="../assets/ot-protected-amp.png" alt="SONiC for optical transport white-box system" style="zoom: 50%;" />
+<img src="../../assets/ot-protected-amp.png" alt="SONiC for optical transport white-box system" style="zoom: 50%;" />
 
 * 2D-ROADM: Single box support 2 degree ROAMD is another target implementation. High degree ROADM could be formed by multiple 2D-ROADM (disaggregated approach).
-<img src="../assets/ot-2d-roadm.png" alt="SONiC for optical transport white-box system" style="zoom: 50%;" />
+<img src="../../assets/ot-2d-roadm.png" alt="SONiC for optical transport white-box system" style="zoom: 50%;" />
 
 * Transponders:[TBD]
 
@@ -16,13 +16,13 @@ As there are different types of optical transport devices in optical network, so
 ## Optical Features Supported
 
 sonic-ont north bound interface adopts openconfig transport yang models. [OTAI](../documentation/OTAI-v0.0.1.md) APIs are defined for optical vendors to implement vendor specific drivers (user space or kernel). The drivers are loaded at runtime as shared libraries.
-<img src="../assets/ot-whitebox.png" alt="SONiC for optical transport white-box system" style="zoom: 50%;" />
+<img src="../../assets/ot-whitebox.png" alt="SONiC for optical transport white-box system" style="zoom: 50%;" />
 
 
 ### High Level Design
 The design objective is to fully inherit existing SONiC architecture and infrastructure and seamlessly extending SONiC implementation with optical features without impacting on current switch platforms. The following diagram shows potential changes at system level. The modifications of existing SONiC are illustrated in red.
 
-<img src="../assets/ot-software.png" alt="SONiC for optical transport white-box system" style="zoom: 50%;" />
+<img src="../../assets/ot-software.png" alt="SONiC for optical transport white-box system" style="zoom: 50%;" />
 
 The the following repository and container level design will be provided later, as the project progressing. Some highlights including:
 * For pure optical transport devices with no switching functionality, dhcp-relay and teamd container would be disabled.
@@ -40,14 +40,14 @@ The sonic-otn HLD is still under review and discussion. There are three options 
 
 To provide some background for discussion, the following diagram illustrats existing SONiC core containers to support packet switching functionality.
 
-<img src="../assets/arch-option-sonic.png" alt="SONiC for optical transport white-box system" style="zoom: 40%;" />
+<img src="../../assets/arch-option-sonic.png" alt="SONiC for optical transport white-box system" style="zoom: 40%;" />
 
 Please note that SAI API is implemented in both swss and syncd containers and the south bound interface(SBI) is conceptually provided by SAI in swss container, which updates Flex-counter DB and ASIC DB. By subscribing Flex-couter DB and ASIC DB changes, syncd will call invloking vendor SAI implementaion to communicate to hardware/ASIC.
 
 ### Option 1: New OTN Containers
 Current sonic-otn implementation contributed by ALI/Accelink.
 
-<img src="../assets/arch-option1-ali-accelink.png" alt="SONiC for optical transport white-box system" style="zoom: 40%;" />
+<img src="../../assets/arch-option1-ali-accelink.png" alt="SONiC for optical transport white-box system" style="zoom: 40%;" />
 
 In this approach, original SAI, swss and sairedis is modified to support OTN functions. As a result, three new repos ``sonic-olss, OTAI and sonic-laredis`` are created. In these repos, new business logic for OTN is added and the build/compile and runtime infrastructure is cloned from SONiC and modified.
 
@@ -65,12 +65,12 @@ On syncd side, since we copied the SONiC infrastructure in ot-Syncd and OTAI in 
 
 On the swss side, SONiC already separated infrastructure (swss-common lib) from the business-logic (swss). In most of time, developers are working on the OTN and Switch application layer instead of infrastructure (compared SWSS with SWSS-common).  We may avoid mixing the OTN and switch application service together in the same docker, in order to reusing these infrastructure. New olss container code mostly are business logic for OTN. Limited code duplication between swss and olss is worth to achieve a clear separation of switching and OTN functionality.
 
-<img src="../assets/arch-option1-evol.png" alt="SONiC for optical transport white-box system" style="zoom: 40%;" />
+<img src="../../assets/arch-option1-evol.png" alt="SONiC for optical transport white-box system" style="zoom: 40%;" />
 
 ### Option 2: OTN Functions in Existing Containers
 This option is proposed by Molex team based on deep dive studying of existing SONiC design and implementation, as well as extensive prototyping.
 
-<img src="../assets/arch-option2-molex.png" alt="SONiC for optical transport white-box system" style="zoom: 40%;" />
+<img src="../../assets/arch-option2-molex.png" alt="SONiC for optical transport white-box system" style="zoom: 40%;" />
 
 In this approach, original SAI, swss and sairedis are retained and unchanged. OTN code only contains the new APIs and optical business logic (OTAI, confmgr and orchagent). At compile time, the OTN code is plugged into SONiC code base (always latest) for OTN platforms, and OTN code is not included build for switching platforms. At runtime, the packet switching functions/features in swss, syncd will not be initialized/activated for a OTN platform. Therefore, syncd only uses OTAI APIs.
 
@@ -86,7 +86,7 @@ In this approach, original SAI, swss and sairedis are retained and unchanged. OT
 ### Option 3: New OTN Containers and Existing Containers
 In this approach proposed by Infinera team, two new containers (olss, ot-syncd) are added while original swss and syncd for packet switch are retained at runtime. Also a new optical-DB is introduced to store optical info (equivalent to asic-DB).
 
-<img src="../assets/arch-option3-infinera.png" alt="SONiC for optical transport white-box system" style="zoom: 40%;" />
+<img src="../../assets/arch-option3-infinera.png" alt="SONiC for optical transport white-box system" style="zoom: 40%;" />
 
 Assume that olss and ot-syncd are same as in option 1. The difference is this option uses new optical-DB, instead of ASIC-DB, for OTN.
 
@@ -135,3 +135,13 @@ As SONiC OTN does not need many switching features, some docker containers are n
 | PDE                    | No          |
 | ICCPD                  | No          |
 | P4RT                   | No          |
+
+
+## Decision
+After Evaluating the design option, option 1 is chosen and the tasks for SONiC repos are listed as followings. The goal is to merge and push the OTN code to upstream SONiC repos:
+- new repos: OTAI, sonic-otairedis, sonic-olss. We should ask for feedback from SONiC maintainers (TSM) and accept these new repos. We may want to resync them with latest SAI, sonic-sairedis and sonic-swss first.
+- For other respos changed and diverged, we should make them mergeable, not creating new repos just for OTN:
+  - sonic-platform-daemon and sonic-platform-common are significantly changed for OTN. The original base classes and processes need to be restored. If new features are required by OTN, then enhancement can be submitted as PRs
+   - sonic-management-common and sonic-management-framework: Add new yang, CV, and transformer/apps for Openconfig models. Should have no conflict.
+  - sonic-swss-common: this is the core lib used by all containers (logging, db access etc..). OTN changes including, nameing, and removing original SONiC redis table etc.. The code need to be reverted into its original version and then apply OTN changes without impact existing switching platform
+  - sonic-buildimage: ideally, we just add new OTN platforms/devices/drivers, so it is add-on code change and should be compatible.

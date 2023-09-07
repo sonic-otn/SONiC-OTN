@@ -8,14 +8,17 @@ Each items below should have a status of:
 * in progress.
 * completed.
 
-## HLD (in progress)
-6/27/23: Discussion on [Molex proposal](./SONiC-OTN-HLD.md)
+## HLD (completed)
+6/27/23: Discussion on [Molex proposal](../documentation/discussion/SONiC-OTN-HLD-discussion.md)
 
 7/11/23: Discussion on [Infinera proposal]()
 
-## OTAI API Spec (in progress)
+9/7/23: [Option 1](../documentation/SONiC-OTN%20HLD%20and%20plan%20summary.pdf) is chosen
+
+## OTAI API Spec (Completed)
 * LAI -> OTAI name change. Adopted. [OTAI repo](https://github.com/zhengweitang-zwt/OTAI) created.
 * 7/11/23: Generic hardware management should not be in OTAI. These functionalities are covered in existing pmon container. [Molex's feedback](./discussion/OTAI_feedback_molex.md).
+* 9/7: OTAI [initial version](../documentation/OTAI-0.0.1-spec.xlsx) will be pure openconfig yang model based.
 
 ## sonic-platform-daemon sonic-platform-common (in progress)
 * Restore deleted original code of platform python base classes and pmon daemons (PSU, Fan, Thermal, xcvr).

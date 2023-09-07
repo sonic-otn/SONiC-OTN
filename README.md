@@ -15,7 +15,7 @@ The following diagrams illustrate end to end network deployment with SONiC as op
 <img src="assets/sonic-otn-packet-optical-system.png" alt="packet optical and open line system with sonic-otn" style="zoom: 40%;" />
 
 ## Estimated Duration
-Two years, by  December, 2024
+Two years, by December, 2024
 
 ## Contribution Artifacts to SONiC Community
 * Optical Transport Abstraction Interface (OTAI) Specification and header files. 
@@ -35,4 +35,4 @@ This section provides a proposed specification for optical transport abstraction
 Please find OTAI spec [here](documentation/OTAI-v0.0.1.md).
 
 ### High Level Design
-Please find sonic-otn high level design [here](documentation//SONiC-OTN-HLD.md) which defines the design objectives and approaches of this project. It is important that HLD should be submitted to large community for their endorsement. 
+Please find sonic-otn high level design [here](documentation/SONiC-OTN%20HLD%20and%20plan%20summary.pdf) which defines the design objectives and approaches of this project.
