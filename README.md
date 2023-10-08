@@ -16,13 +16,27 @@ The following diagrams illustrate end to end network deployment with SONiC as op
 
 ## Estimated Duration
 Two years, by December, 2024
+```mermaid
+---
+displayMode: compact
+---
+gantt
+title SONiC-OTN group timeline
+
+SONiC-OTN Group Kick off    :done,  des1, 2023-01-01,90d
+Source Code Open Sourced           :done,  des2, after des1, 180d
+Submit SONiC-OTN to SONiC master      :crit,  des3, after des2, 240d
+Support More SONiC-OTN platforms    :active,  des4, after des3, 180d
+Target SONiC 202411 branch  :milestone, 2024-011-30, 0d
+
+```
 
 ## Contribution Artifacts to SONiC Community
 * Optical Transport Abstraction Interface (OTAI) Specification and header files. 
 * Contribution to SONiC code base for support optical transport devices:
   - sonic-ot-vendorA.bin, for all devices of vendorA.
   - sonic-ot-vendorB.bin, for all devices of vendorB.
-  - sonic-ot-kvm.img.gz, Virtual optical device. 
+  - sonic-ot-vs.img.gz, Virtual optical device. 
   - ONIE images for optical device families.
 
 With above deliverables, SONiC effectively becomes a network operating system (NOS) supporting both packet switch and optical transport white box. Work-in-progress source code repository in [Github](https://github.com/zhengweitang-zwt/sonic-buildimage).
