@@ -50,3 +50,6 @@ Please find OTAI spec [here](documentation/OTAI-v0.0.1.md).
 
 ### High Level Design
 Please find sonic-otn high level design [here](documentation/SONiC-OTN%20HLD%20and%20plan%20summary.pdf) which defines the design objectives and approaches of this project.
+
+### Project management
+You can find the sonic-otn project development status and tasks [here](https://github.com/users/sonic-otn/projects/1/views/2), and you can join the sonic-otn bi-weekly community meeting from the Calendar [here](https://sonic-net.github.io/SONiC/Calendar.html)
