@@ -204,13 +204,24 @@ sample-interval     = uint64
 
 ### AMPLIFIER
 
-*/openconfig-optical-amplifier*
+*;/openconfig-optical-amplifier:optical-amplifiers/amplifier/config*
+
+*;revision "2019-12-06" {reference "0.5.0"}*
 
 ```
-key                 = AMPLIFIER|<name>      ; string
-;field               = value
-name                = STRING
-amp-mode            = STRING                ; enum: CONSTANT_GAIN, CONSTANT_POWER, DYNAMIC_GAIN
+key                 = AMPLIFIER|name         ; string
+;feild              = value
+type                = STRING                 ; identityref: EDFA, FORWARD_RAMAN,  BACKWARD_RAMAN, HYBRID
+target-gain         = float64                ; yang decimal64, json Number
+max-gain            = float64
+min-gain            = float64
+target-gain-tilt    = float64
+gain-range          = STRING                 ; identityref: LOW_GAIN_RANGE, MID_GAIN_RANGE, HIGH_GAIN_RANGE, FIXED_GAIN_RANGE
+amp-mode            = STRING                 ; identityref: CONSTANT_GAIN, CONSTANT_POWER, DYNAMIC_GAIN
+target-output-power = float64
+max-output-power    = float64
+enabled             = "true" / "false"       ; boolean
+fiber-type-profile  = STRING                 ; identityref: DSF, LEAF, SSMF, TWC, TWRS
 ```
 
 ### APS
@@ -226,14 +237,17 @@ force-to-port       = STRING
 
 ### ATTENUATOR
 
-*/openconfig-optical-attenuator*
+*;/openconfig-optical-attenuator:optical-attenuators/attenuator/config*
+
+*;revision "2019-07-19" {reference "0.1.0"}*
 
 ```
 key                 = ATTENUATOR|<name>      ; string
 ;field               = value
-name                = STRING
-attenuation-mode    = STRING
+attenuation-mode    = STRING                 ; identityref
+target-output-power = float64                ; yang decimal64, json Number
 attenuation         = float64
+enabled             = "true" / "false"       ; boolean
 ```
 
 ### MEDIA_CHANNEL
@@ -267,13 +281,14 @@ target-power         = float64
 
 ### OCM
 
-*/openconfig-channel-monitor*
+*;/openconfig-channel-monitor:channel-monitors/channel-monitor/config*
+
+*;revision "2019-10-24" {reference "0.4.0"}*
 
 ```
-key                 = OCM|OCM-1-<1-8>-<1-n>      ; string
+key                 = OCM|name ;leafref to platform component (OCM-1-<1-8>-<1-n>)
 ;field               = value
-name                = STRING
-monitor-port        = STRING
+monitor-port        = STRING   ;leafref to platform component
 ```
 
 ### OTDR
@@ -827,86 +842,78 @@ target-attenuation  = float64
 attenuation         = float64  
 ```
 
-### AMPLIFIER
+### AMPLIFIER_TABLE
 
-*openconfig-optical-amplifier*
+*;/openconfig-optical-amplifier:optical-amplifiers/amplifier/state*
+
+*;revision "2019-12-06" {reference "0.5.0"}*
 
 ```
-key                 = AMPLIFIER|<name>      ; string
+key                 = AMPLIFIER_TABLE|<name>      ; string
 ;field               = value
 name                = STRING
-type                = STRING    ; enum: EDFA:0, FORWARD_RAMAN:1, BACKWARD_RAMAN:2, HYBRID:3
-target-gain         = float64
-min-gain            = float64
-max-gain            = float64
-target-gain-tilt    = float64
-gain-range          = STRING    ; enum: LOW_GAIN_RANGE, MID_GAIN_RANGE, HIGH_GAIN_RANGE, FIXED_GAIN_RANGE
-amp-mode            = STRING    ; enum: CONSTANT_POWER:0, DYNAMIC_GAIN:1
+type                = STRING    ; identityref: EDFA, FORWARD_RAMAN,  BACKWARD_RAMAN, HYBRID
+target-gain         = float64   ; yang decimal64, json Number
+min-gain            = float64   
+max-gain            = float64  
+target-gain-tilt    = float64 
+gain-range          = STRING    ; identityref: LOW_GAIN_RANGE, MID_GAIN_RANGE, HIGH_GAIN_RANGE, FIXED_GAIN_RANGE
+amp-mode            = STRING    ; identityref: CONSTANT_POWER, DYNAMIC_GAIN
 target-output-power = float64
 max-output-power    = float64
 enabled             = "true"/ "false"      ; boolean
-fiber-type-profile  = STRING    ; enum: DSF:0, LEAF:1, SSMF:2, TWC:3, TWRS:4
-ingress-voa-atten   = float64
-component           = STRING
-ingress-port        = STRING
-egress-port         = STRING
-serial-no           = STRING
-part-no             = STRING
-mfg-name            = STRING
-mfg-date            = STRING
-oper-status         = STRING
-empty               = "true"/ "false"      ; boolean
-removable           = "true"/ "false"      ; boolean
-location            = STRING
-parent              = STRING
-subcomponents       = STRING
-equipment-failure   = "true"/ "false"      ; boolean
-equipment-mismatch  = "true"/ "false"      ; boolean
-firmware-version    = STRING
-hardware-version    = STRING
-software-version    = STRING
-```
+fiber-type-profile  = STRING    ; identityref: DSF, LEAF, SSMF, TWC, TWRS
 
-### OSC
-
-*openconfig-optical-amplifier*
+component           = STRING    ; ref to platform component
+ingress-port        = STRING    ; ref to platform component
+egress-port         = STRING    ; ref to platform component
+actual-gain         = float64   ; yang decimal64 (instant value only)
+actual-gain-tilt    = float64 
+input-power-total   = float64
+input-power-c-band  = float64
+input-power-l-band  = float64
+output-power-total   = float64
+output-power-c-band = float64
+output-power-l-band = float64
+laser-bias-current  = float64
+optical-return-loss  = float64
 
 ```
-key                 = OSC|OSC-1-<1-4>-1     ; string
+
+### OSC_TABLE
+
+*;/openconfig-optical-amplifier:optical-supervisory-channels/supervisory-channel/config*
+
+*;revision "2019-12-06" {reference "0.5.0"}*
+
+```
+key                 = OSC_TABLE|interface  ; string (OSC-1-<1-4>-1)
 ;field               = value
-interface           = STRING
-output-frequency    = int
-serial-no           = STRING
-part-no             = STRING
-mfg-name            = STRING
-mfg-date            = STRING
-oper-status         = STRING
-empty               = "true"/ "false"      ; boolean
-removable           = "true"/ "false"      ; boolean
-location            = STRING
-parent              = STRING
-equipment-failure   = "true"/ "false"      ; boolean
-equipment-mismatch  = "true"/ "false"      ; boolean
-firmware-version    = STRING
-hardware-version    = STRING
-software-version    = STRING
+input-power         = float64
+output-power        = float64
+laser-bias-current  = float64
+output-frequency    = float64
 ```
 
-### ATTENUATOR
+### ATTENUATOR_TABLE
+*;/openconfig-optical-attenuator:optical-attenuators/attenuator/state*
 
-*openconfig-optical-attenuator*
+*;revision "2019-07-19" {reference "0.1.0"}*
 
 ```
-key                 = ATTENUATOR|<name>    ; string
+key                 = ATTENUATOR_TABLE|<name>    ; string
 ;field               = value
-name                = STRING
-attenuation-mode    = STRING               ; enum: CONSTANT_POWER:0, CONSTANT_ATTENUATION:1
+attenuation-mode    = STRING           ; identityref: CONSTANT_POWER, CONSTANT_ATTENUATION
 target-output-power = float64
 attenuation         = float64
-enabled             = "true"/ "false"      ; boolean
-component           = STRING
-ingress-port        = STRING
-egress-port         = STRING
+enabled             = "true"/ "false"  ; boolean
+component           = STRING           ; ref to platform component
+ingress-port        = STRING           ; ref to platform component
+egress-port         = STRING           ; ref to platform component
+actual-attenuation  = float64          ; yang decimal64 (instant value only)
+output-power-total  = float64
+optical-return-loss  = float64
+
 ```
 
 ### WSS
@@ -963,36 +970,29 @@ wait-to-restore-time= uint32
 target-power        = float64
 ```
 
-### OCM
+### OCM_TABLE
 
-*openconfig-channel-monitor*
+*;/openconfig-channel-monitor:channel-monitors/channel-monitor/state*
 
-```
-key                 = OCM|OCM-1-<1-8>-<1-n>    ; string
-;field               = value
-name                = STRING
-monitor-port        = STRING
-serial-no           = STRING
-part-no             = STRING
-mfg-name            = STRING
-mfg-date            = STRING
-hardware-version    = STRING
-firmware-version    = STRING
-oper-status         = STRING
-empty               = "true"/ "false"      ; boolean
-removable           = "true"/ "false"      ; boolean
-parent              = STRING
-software-version    = STRING
-```
+*;revision "2019-10-24" {reference "0.4.0"}*
 
 ```
-key                 = OCM|<name>|<lower-frequency>|<upper-frequency>    ; string
-;field               = value
-lower-frequency     = uint64
-upper-frequency     = uint64
-power               = float64
+key                 = OCM_TABLE|name  ; string
+;feild              = value
+monitor-port        = STRING          ; leafref to platform component
 ```
 
+### OCM_CHANNEL
+*;/openconfig-channel-monitor:channel-monitors/channel-monitor/channels*
+
+*;revision "2019-10-24" {reference "0.4.0"}*
+
+```
+key = OCM_CHANNEL|name|lower-frequency|upper-frequency
+                       ; name is key in OCM_TABLE
+;feild              = value
+power               = float64             ; yang decimal64
+```
 ### OTDR
 
 *No openconfig yang*
