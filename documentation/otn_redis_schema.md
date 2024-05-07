@@ -434,17 +434,7 @@ software-version    = STRING
 ```
 key                 = CHASSIS|CHASSIS-1  ; string
 ;field               = value
-serial-no           = STRING
-part-no             = STRING
-mfg-name            = STRING
-mfg-date            = STRING
-hardware-version    = STRING
 oper-status         = STRING
-empty               = "true"/ "false"    ;boolean
-removable           = "true"/ "false"    ;boolean
-parent              = STRING
-software-version    = STRING
-subcomponents       = STRING
 ```
 
 ### LINECARD
@@ -453,20 +443,9 @@ subcomponents       = STRING
 ```
 key                 = LINECARD|LINECARD-1-<1-4>  ; string
 ;field               = value
-serial-no           = STRING
-part-no             = STRING
-mfg-name            = STRING
-mfg-date            = STRING
-hardware-version    = STRING
-oper-status         = STRING
-empty               = "true"/ "false"    ;boolean
-removable           = "true"/ "false"    ;boolean
-parent              = STRING
-software-version    = STRING
 board-mode          = STRING        ;enum = LA_400G_CA_200GE, L1_400G_CA_100GE, L2_400G_CA_100GE, LA_400G_RE_200GE, LA_400G_SNCP_CA_100GE, LA_400G_SNCP_C12_200GE, LA_400G_SNCP_C34_200GE, LA_400G_RE_100GE
 linecard-type       = STRING
 power-admin-state   = STRING
-subcomponents       = STRING
 ```
 
 ### TRANSCEIVER_C
@@ -488,15 +467,6 @@ present             = STRING        ;enum : PRESENT, NOT_PRESENT
 enabled             = "true"/ "false"    ;boolean
 fault-condition     = "true"/ "false"    ;boolean
 connector-type      = STRING        ;enum : LC_CONNECTOR
-serial-no           = STRING
-empty               = "true"/ "false"    ;boolean
-mfg-name            = STRING
-mfg-date            = STRING
-hardware-version    = STRING
-firmware-version    = STRING
-removable           = "true"/ "false"    ;boolean
-oper-status         = STRING
-parent              = STRING
 part-no             = STRING
 extend-module-code  = STRING        ;enum : SDR, DDR, QDR, FDR, EDR
 data-status         = STRING        ;enum : NOT_READY, READY
@@ -543,15 +513,6 @@ present             = STRING             ;enum : PRESENT, NOT_PRESENT
 enabled             = "true"/ "false"    ;boolean
 fault-condition     = "true"/ "false"    ;boolean
 connector-type      = STRING             ;enum : AOC_CONNECTOR, DAC_CONNECTOR, LC_CONNECTOR, MPO_CONNECTOR, SC_CONNECTOR
-serial-no           = STRING
-empty               = "true"/ "false"    ;boolean
-mfg-name            = STRING
-mfg-date            = STRING
-hardware-version    = STRING
-firmware-version    = STRING
-removable           = "true"/ "false"    ;boolean
-oper-status         = STRING
-parent              = STRING
 part-no             = STRING
 laser-age           = int
 operate-time        = int
@@ -606,10 +567,6 @@ key                 = PORT|PORT-1-1-(C<1-12>, L<1-2>)  ; string
 ;field               = value
 admin-state         = STRING        ; enum : enabled, disabled
 oper-status         = STRING        ; enum : ACTIVE, INACTIVE, DISABLE
-empty               = "true"/ "false"       ;boolean
-removable           = "true"/ "false"       ;boolean
-location            = STRING
-parent              = STRING
 optical-port-type   = STRING    ; enum: ADD, DROP, EGRESS, INGRESS, MONITOR, TERMINAL_CLIENT, TERMINAL_LINE
 ```
 
@@ -815,21 +772,6 @@ relative-switch-threshold = float64
 relative-switch-threshold-offset = float64
 force-to-port             = STRING                ; enum: NONE:0, PRIMATRY:1, SENCONDARY:2
 active-path               = STRING                ; enum: PRIMATRY:0, SENCONDARY:1
-serial-no                 = STRING
-part-no                   = STRING
-mfg-name                  = STRING
-mfg-date                  = STRING
-oper-status               = STRING
-empty                     = "true"/ "false"       ; boolean
-removable                 = "true"/ "false"       ; boolean
-location                  = STRING
-parent                    = STRING
-subcomponents             = STRING
-equipment-failure         = "true"/ "false"       ; boolean
-equipment-mismatch        = "true"/ "false"       ; boolean
-firmware-version          = STRING
-hardware-version          = STRING
-software-version          = STRING
 ```
 
 ### APS_PORT
@@ -922,17 +864,7 @@ optical-return-loss  = float64
 ```
 key                 = WSS|WSS-1-<1-4>-<1-n> ; string
 ;field               = value
-name                = STRING
-serial-no           = STRING
-part-no             = STRING
-mfg-name            = STRING
-mfg-date            = STRING
-hardware-version    = STRING
-oper-status         = STRING
-empty               = "true"/ "false"      ; boolean
-removable           = "true"/ "false"      ; boolean
-parent              = STRING
-software-version    = STRING
+
 ```
 
 ### MEDIA_CHANNEL
