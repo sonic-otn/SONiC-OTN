@@ -1043,6 +1043,11 @@ key                 = CLEANPM|<entity-name>  ; string
 entity-name         = STRING
 period              = STRING                 ; enum: 15, 24
 ```
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> add sonic-otn PM data in redis schema definition
 # COUNTERS_DB, index 2
 The OTN current PM data (gauge and counters statistics) is stored in COUNTER_DB.
 
