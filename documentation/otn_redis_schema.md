@@ -1043,11 +1043,8 @@ key                 = CLEANPM|<entity-name>  ; string
 entity-name         = STRING
 period              = STRING                 ; enum: 15, 24
 ```
-<<<<<<< HEAD
-=======
 
 
->>>>>>> add sonic-otn PM data in redis schema definition
 # COUNTERS_DB, index 2
 The OTN current PM data (gauge and counters statistics) is stored in COUNTER_DB.
 
@@ -1208,7 +1205,7 @@ validity                  = STRING           ; enum: incomplete, complete, inval
 #### Ethernet
 Openconfig path: openconfig-terminal-device/terminal-device/logical-channels/channel/ethernet/state/*
 ```
-key                             = ETHERNET:CH<channel_index>:<15_pm_current|24_pm_curren|current> ; string
+key                             = ETHERNET:CH<channel_index>:<15_pm_current|24_pm_current|current> ; string
 ;field                          = value
 interval                        = int              ; 900000000000 for 15 minutes interval,86400000000000 for 24 hours interval, 1000000000 since system start up
 starttime                       = int              ; timestamp in nanoseconds relative to the Unix Epoch
@@ -1309,7 +1306,7 @@ rx-1519b-max                    = int
 #### OTN
 Openconfig Path: openconfig-terminal-device/terminal-device/logical-channels/channel/otn/state/*
 ```
-key                             = OTN:CH<channel_index>:<15_pm_current|24_pm_curren|current> ; string
+key                             = OTN:CH<channel_index>:<15_pm_current|24_pm_current|current> ; string
 ;field                          = value
 interval                        = int              ; 900000000000 for 15 minutes interval,86400000000000 for 24 hours interval, 1000000000 since system start up
 starttime                       = int              ; timestamp in nanoseconds relative to the Unix Epoch
@@ -1327,7 +1324,7 @@ code-violations                 = int
 #### Transceiver
 Openconfig Path: openconfig-platform/components/component/transceiver/state
 ```
-key                             = TRANSCEIVER:TRANSCEIVER-1-<slot_index>-C<client_index>:<15_pm_current|24_pm_curren|current> ; string
+key                             = TRANSCEIVER:TRANSCEIVER-1-<slot_index>-C<client_index>:<15_pm_current|24_pm_current|current> ; string
 ;field                          = value
 interval                        = int              ; 900000000000 for 15 minutes interval,86400000000000 for 24 hours interval, 1000000000 since system start up
 starttime                       = int              ; timestamp in nanoseconds relative to the Unix Epoch
@@ -1336,7 +1333,7 @@ loss-time                       = int              ; vendor extensions
 fec-uncorrectable-words         = int
 ```
 ```
-key                             = TRANSCEIVER:TRANSCEIVER-1-<slot_index>-L<line_index>:<15_pm_current|24_pm_curren|current> ; string
+key                             = TRANSCEIVER:TRANSCEIVER-1-<slot_index>-L<line_index>:<15_pm_current|24_pm_current|current> ; string
 ;field                          = value
 interval                        = int              ; 900000000000 for 15 minutes interval,86400000000000 for 24 hours interval, 1000000000 since system start up
 starttime                       = int              ; timestamp in nanoseconds relative to the Unix Epoch
@@ -1348,7 +1345,7 @@ fec-uncorrectable-words         = int
 #### Interface
 Openconfig Path: openconfig-interfaces/interfaces/interface/state/counters
 ```
-key                             = INTERFACE:INTERFACE-1-<slot_index>-<component_index>-OSC:<15_pm_current|24_pm_curren|current> ; string
+key                             = INTERFACE:INTERFACE-1-<slot_index>-<component_index>-OSC:<15_pm_current|24_pm_current|current> ; string
 ;field                          = value
 interval                        = int              ; 900000000000 for 15 minutes interval,86400000000000 for 24 hours interval, 1000000000 since system start up
 starttime                       = int              ; timestamp in nanoseconds relative to the Unix Epoch
@@ -1368,4 +1365,56 @@ out-multicast-pkts              = int
 out-octets                      = int
 out-pkts                        = int
 out-unicast-pkts                = int
+```
+
+# HISTORY_DB, index 10 (share logical instance with GB_COUNTERS_DB)
+The OTN historical PM data (gauge and counters statistics) and alarms are stored in HISTORY_DB.
+
+### Historical gauge statistic table template
+The `object_name`, `object_index` and `PM_item_name` is the same as the current PM tables in COUNTER_DB, but the history PM table contains the PM bin start timestamp. 
+```
+key                       = <object_name>:<object_index>_<PM_item_name>:<15_pm_history|24_pm_history>_<starttime> ; string  
+;field                    = value  
+interval                  = int              ; 900000000000 for 15 minutes interval,86400000000000 for 24 hours interval  
+starttime                 = int              ; timestamp in nanoseconds relative to the Unix Epoch  
+max                       = int | float64    ; float64 with fraction-digits 1, 2, and 18   
+max-time                  = int              ; timestamp in nanoseconds relative to the Unix Epoch  
+min                       = int | float64    ; float64 with fraction-digits 1, 2, and 18  
+min-time                  = int              ; timestamp in nanoseconds relative to the Unix Epoch  
+instant                   = int | float64    ; float64 with fraction-digits 1, 2, and 18  
+avg                       = int | float64    ; float64 with fraction-digits 1, 2, and 18  
+validity                  = STRING           ; enum: incomplete, complete, invalid  
+```
+### Counters statistic table 
+The OTN historical counters statistics contains the PM start timestamp, and the fields are the same as current PM.
+
+#### Ethernet
+```
+key                             = ETHERNET:CH<channel_index>:<15_pm_history|24_pm_history>_<starttime> ; string
+```
+#### OTN
+```
+key                             = OTN:CH<channel_index>:<15_pm_history|24_pm_history>_<starttime> ; string
+```
+#### Transceiver
+```
+key                             = TRANSCEIVER:TRANSCEIVER-1-<slot_index>-C<client_index>:<15_pm_history|24_pm_history>_<starttime> ; string
+key                             = TRANSCEIVER:TRANSCEIVER-1-<slot_index>-L<line_index>:<15_pm_history|24_pm_history>_<starttime> ; string
+```
+#### Interface
+```
+key                             = INTERFACE:INTERFACE-1-<slot_index>-<component_index>-OSC:<15_pm_history|24_pm_history>_<starttime> ; string
+```
+
+### Historical alarm table template
+```
+key                       = HISALARM:<alarm_id>_<time-cleared> ; string  
+;field                    = value  
+id                        = STRING           ; the unique id  
+time-created              = int              ; timestamp in nanoseconds relative to the Unix Epoch  
+resource                  = STRING           ; the OTAI object name,  it may be a component, ports,channel, etc 
+text                      = STRING           ; the alarm information text 
+severity                  = STRING           ; enums MINOR, WARNING, MAJOR, CRITICAL
+type-id                   = STRING           ; enums defined in OTAI alarm list  
+time-cleared              = int              ; timestamp in nanoseconds relative to the Unix Epoch  
 ```
