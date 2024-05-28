@@ -138,14 +138,15 @@ If the SYncd-OT container restart, the Syncd-OT calls the `HardReiniter` functio
 If the linecard reboot, the OTAI library can detect the heartbeat and trigger the `OTAI_LINECARD_NOTIFICATION_NAME_LINECARD_STATE_CHANGE` notification. When the linecard boot-up and status ready, OTAI library triggers the notification again. Once the status is ready, then Syncd-OT call the `SoftReniniter` functions to re-initialize all the OTAI objects and Flexcounter module. 
 
 <img src="../assets/Syncd-OT_ReIniter.png" alt="Syncd-OT re-initialization.png" style="zoom: 50%;" />
-1. After Syncd-OT reboot, it waits for the OTAI library status is operational ready.
-2. Syncd-OT calls the `HardReiniter` function to re-initialize OTAI objects and Flexcounter. It reads the ASIC state  from the ASIC_DB.
-3. It re-initialize the linecard first by calling the `processLinecards` function.
-4. In the `processLinecards` function, it recreates the linecard object based on the attributes in AISC_db.
-5. Once the linecard object is created, it calls vendor's OTAI library to set the other attributes.
-6. Then Syncd-OT starts to re-initialize the other OTAi objects in `processOids`
-7. In the `processOids` function, it loops all OTAI objects and calls vendor's OTAI library to recreate these objects.
-8. After all the other OTAI objects are created, it calls vendor's OTAI library to set the other attributes.
-9. Syncd-OT starts to reinitialize Flexcounter, it the Flexcounter groups and counter_ids from Flexcounter database
-10. Based on these configurations in Flecounter database, it calls the FlexCounterManager to add plugins and counters.
+
+1. After Syncd-OT reboot, it waits for the OTAI library status is operational ready.  
+2. Syncd-OT calls the `HardReiniter` function to re-initialize OTAI objects and Flexcounter. It reads the ASIC state  from the ASIC_DB.  
+3. It re-initialize the linecard first by calling the `processLinecards` function.  
+4. In the `processLinecards` function, it recreates the linecard object based on the attributes in AISC_db.  
+5. Once the linecard object is created, it calls vendor's OTAI library to set the other attributes.  
+6. Then Syncd-OT starts to re-initialize the other OTAi objects in `processOids`  
+7. In the `processOids` function, it loops all OTAI objects and calls vendor's OTAI library to recreate these objects.  
+8. After all the other OTAI objects are created, it calls vendor's OTAI library to set the other attributes.  
+9. Syncd-OT starts to reinitialize Flexcounter, it the Flexcounter groups and counter_ids from Flexcounter database  
+10. Based on these configurations in Flecounter database, it calls the FlexCounterManager to add plugins and counters.  
 
