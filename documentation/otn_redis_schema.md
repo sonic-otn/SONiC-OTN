@@ -1050,7 +1050,7 @@ The OTN current PM data (gauge and counters statistics) is stored in COUNTER_DB.
 
 ### Gauge statistic table template
 ```
-key                       = <object_name>:<object_index>_<PM_item_name>:<15_pm_current|24_pm_current> ; string  
+key                       = <table_name>:<object_index>_<PM_item_name>:<15_pm_current|24_pm_current> ; string  
 ;field                    = value  
 interval                  = int              ; 900000000000 for 15 minutes interval,86400000000000 for 24 hours interval  
 starttime                 = int              ; timestamp in nanoseconds relative to the Unix Epoch  
@@ -1063,8 +1063,8 @@ avg                       = int | float64    ; float64 with fraction-digits 1, 2
 validity                  = STRING           ; enum: incomplete, complete, invalid  
 ```
           
-#### Linecard
-| object_name | object_index | PM_item_name | Openconfig path | description |
+#### LINECARD
+| table_name | object_index | PM_item_name | Openconfig path | description |
 | :------| :---------- | :-------- | :-------- | :-------- |
 | LINECARD | LINECARD-1-<slot_index> | CpuUtilization | openconfig-platform/components/component/cpu/utilization/state  |   |
 | LINECARD | LINECARD-1-<slot_index> | MemoryAvailable | openconfig-platform/components/component/state/memory/available  |   |
@@ -1073,7 +1073,7 @@ validity                  = STRING           ; enum: incomplete, complete, inval
     
   
 #### OCH
-| object_name | object_index | PM_item_name | Openconfig path | description |
+| table_name | object_index | PM_item_name | Openconfig path | description |
 | :------| :---------- | :-------- | :-------- | :-------- |
 | OCH | OCH-1-<slot_index>-L<line_index> | CarrierFrequencyOffset |  openconfig-platform/components/component/oc-opt-term:optical-channel/state/carrier-frequency-offset |   |
 | OCH | OCH-1-<slot_index>-L<line_index> | ChromaticDispersion | openconfig-platform/components/component/oc-opt-term:optical-channel/state/chromatic-dispersion  |   |
@@ -1093,7 +1093,7 @@ validity                  = STRING           ; enum: incomplete, complete, inval
 | OCH | OCH-1-<slot_index>-L<line_index> | TxLaserAge |  vendor extensions |   |
 
 #### OTN
-| object_name | object_index | PM_item_name | Openconfig path | description |
+| table_name | object_index | PM_item_name | Openconfig path | description |
 | :------| :---------- | :-------- | :-------- | :-------- |
 | OTN | CH<channel_index> | Esnr |  openconfig-terminal-device/terminal-device/logical-channels/channel/otn/state/esnr |   |
 | OTN | CH<channel_index> | PostFecBer | openconfig-terminal-device/terminal-device/logical-channels/channel/otn/state/post-fec-ber  |   |
@@ -1105,7 +1105,7 @@ validity                  = STRING           ; enum: incomplete, complete, inval
 
 #### Transceiver
 
-| object_name | object_index | PM_item_name | Openconfig path | description |
+| table_name | object_index | PM_item_name | Openconfig path | description |
 | :------| :---------- | :-------- | :-------- | :-------- |
 | TRANSCEIVER | TRANSCEIVER-1-<slot_index>-C<client_index> | CaseTemperature | vendor extensions  |   |
 | TRANSCEIVER | TRANSCEIVER-1-<slot_index>-C<client_index> | InputPower | openconfig-platform/components/component/transceiver/state/input-power  |   |
@@ -1118,7 +1118,7 @@ validity                  = STRING           ; enum: incomplete, complete, inval
 | TRANSCEIVER | TRANSCEIVER-1-<slot_index>-C<client_index>:CH-<physical_channel_index> | LaserBiasCurrent |  openconfig-platform/components/component/transceiver/physical-channels/state/laser-bias-current |   |
 | TRANSCEIVER | TRANSCEIVER-1-<slot_index>-C<client_index>:CH-<physical_channel_index> | OutputPower | openconfig-platform/components/component/transceiver/physical-channels/state/output-power  |   |
 
-| object_name | object_index | PM_item_name | Openconfig path | description |
+| table_name | object_index | PM_item_name | Openconfig path | description |
 | :------| :---------- | :-------- | :-------- | :-------- |
 | TRANSCEIVER | TRANSCEIVER-1-<slot_index>-L<line_index> | CaseTemperature |  vendor extensions |   |
 | TRANSCEIVER | TRANSCEIVER-1-<slot_index>-L<line_index> | EdfaBiasCurrent |  vendor extensions |   |
@@ -1137,7 +1137,7 @@ validity                  = STRING           ; enum: incomplete, complete, inval
 | TRANSCEIVER | TRANSCEIVER-1-<slot_index>-L<line_index> | TxModBiasYph | openconfig-platform/components/component/oc-opt-term:optical-channel/state/modulator-bias-y-phase  |   |
 | TRANSCEIVER | TRANSCEIVER-1-<slot_index>-L<line_index> | TxModBiasYq | openconfig-platform/components/component/oc-opt-term:optical-channel/state/modulator-bias-yq  |   |
 
-| object_name | object_index | PM_item_name | Openconfig path | description |
+| table_name | object_index | PM_item_name | Openconfig path | description |
 | :------| :---------- | :-------- | :-------- | :-------- |
 | TRANSCEIVER | TRANSCEIVER-1-<slot_index>-<component_index> | InputPower |  openconfig-platform/components/component/transceiver/state/input-power |   |
 | TRANSCEIVER | TRANSCEIVER-1-<slot_index>-<component_index> | OutputPower | openconfig-platform/components/component/transceiver/state/output-power  |   |
@@ -1145,13 +1145,13 @@ validity                  = STRING           ; enum: incomplete, complete, inval
 | TRANSCEIVER | TRANSCEIVER-1-<slot_index>-<component_index> | LaserBiasCurrent | openconfig-platform/components/component/transceiver/state/LaserBiasCurrent  |   |
 
 #### Panel port
-| object_name | object_index | PM_item_name | Openconfig path | description |
+| table_name | object_index | PM_item_name | Openconfig path | description |
 | :------| :---------- | :-------- | :-------- | :-------- |
 | PORT | PORT-1-<slot_index>-<panel_port_name> | InputPower | openconfig-platform/components/component/port/optical-port/state/input-power  |   |
 | PORT | PORT-1-<slot_index>-<panel_port_name> | OutputPower | openconfig-platform/components/component/port/optical-port/state/output-power  |   |
 
 #### Amplifier
-| object_name | object_index | PM_item_name | Openconfig path | description |
+| table_name | object_index | PM_item_name | Openconfig path | description |
 | :------| :---------- | :-------- | :-------- | :-------- |
 | AMPLIFIER | AMPLIFIER-1-<slot_index>-<component_index> | ActualGain | openconfig-optical-amplifier/optical-amplifier/amplifiers/amplifier/state/actual-gain  |   |
 | AMPLIFIER | AMPLIFIER-1-<slot_index>-<component_index> | ActualGainTilt | openconfig-optical-amplifier/optical-amplifier/amplifiers/amplifier/state/actual-gain-tilt  |   |
@@ -1166,13 +1166,13 @@ validity                  = STRING           ; enum: incomplete, complete, inval
 | AMPLIFIER | AMPLIFIER-1-<slot_index>-<component_index> | OutputReflectPower | vendor extensions  |   |
 
 #### Internal Amplifier port
-| object_name | object_index | PM_item_name | Openconfig path | description |
+| table_name | object_index | PM_item_name | Openconfig path | description |
 | :------| :---------- | :-------- | :-------- | :-------- |
 | PORT | PORT-1-<slot_index>-<edfa_index>-EDFAIN | InputPower | openconfig-platform/components/component/port/optical-port/state/input-power  |   |
 | PORT | PORT-1-<slot_index>-<edfa_index>-EDFAOUT | OutputPower | openconfig-platform/components/component/port/optical-port/state/input-power  |   |
 
 #### APS Port
-| object_name | object_index | PM_item_name | Openconfig path | description |
+| table_name | object_index | PM_item_name | Openconfig path | description |
 | :------| :---------- | :-------- | :-------- | :-------- |
 | APS_PORT | APS-1-<slot_index>-<component_index>-CommonIn | OpticalPower | openconfig-transport-line-protection/aps/aps-modules/aps-module/ports/common-in/state/optical-power  |   |
 | APS_PORT | APS-1-<slot_index>-<component_index>-CommonOutput | OpticalPower |  openconfig-transport-line-protection/aps/aps-modules/aps-module/ports/common-output/state/optical-power |   |
@@ -1184,12 +1184,12 @@ validity                  = STRING           ; enum: incomplete, complete, inval
 | APS_PORT | APS-1-<slot_index>-<component_index>-LineSecondaryOut | Attenuation | openconfig-transport-line-protection/aps/aps-modules/aps-module/ports/line-secondary-out/state/attenuation  |   |
 
 #### ATTENUATOR
-| object_name | object_index | PM_item_name | Openconfig path | description |
+| table_name | object_index | PM_item_name | Openconfig path | description |
 | :------| :---------- | :-------- | :-------- | :-------- |
 | ATTENUATOR | ATTENUATOR-1-<slot_index>-<component_index> | ActualAttenuation | openconfig-optical-attenuator/optical-attenuator/attenuator/state/actual-attenuation  |   |
 
 #### OSC
-| object_name | object_index | PM_item_name | Openconfig path | description |
+| table_name | object_index | PM_item_name | Openconfig path | description |
 | :------| :---------- | :-------- | :-------- | :-------- |
 | OSC | OSC-1-<slot_index>-<component_index> | InputPower |  openconfig-optical-amplifier/optical-amplifier/amplifiers/amplifier/supervisory-channels/supervisory-channel/state/input-power  |   |
 | OSC | OSC-1-<slot_index>-<component_index> | OutputPower | openconfig-optical-amplifier/optical-amplifier/amplifiers/amplifier/supervisory-channels/supervisory-channel/state/output-power  |   |
@@ -1371,9 +1371,9 @@ out-unicast-pkts                = int
 The OTN historical PM data (gauge and counters statistics) and alarms are stored in HISTORY_DB.
 
 ### Historical gauge statistic table template
-The `object_name`, `object_index` and `PM_item_name` is the same as the current PM tables in COUNTER_DB, but the history PM table contains the PM bin start timestamp. 
+The `table_name`, `object_index` and `PM_item_name` is the same as the current PM tables in COUNTER_DB, but the history PM table contains the PM bin start timestamp. 
 ```
-key                       = <object_name>:<object_index>_<PM_item_name>:<15_pm_history|24_pm_history>_<starttime> ; string  
+key                       = <table_name>:<object_index>_<PM_item_name>:<15_pm_history|24_pm_history>_<starttime> ; string  
 ;field                    = value  
 interval                  = int              ; 900000000000 for 15 minutes interval,86400000000000 for 24 hours interval  
 starttime                 = int              ; timestamp in nanoseconds relative to the Unix Epoch  
