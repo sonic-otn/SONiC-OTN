@@ -191,5 +191,41 @@ a. `objectTypeQuery()`, return the OTAI object type if the otai_object_id is val
 b. `otai_query_attribute_capability()`, query an attribute capability.  
 c. `otai_query_attribute_enum_values_capability()`, query an enum attribute list of implemented enum values.  
 d. `otai_object_type_get_availability()`, query an OTAI object's attributes availability.  
-e. `otai_log_set()`, set log level for an OTAI API module  
+e. `otai_log_set()`, set log level for an OTAI API module 
+
+
+### 4 Tests
+#### 4.1 Test cases
+1. Verify that Syncd-OT can support multi-ASIC architecture, each Syncd-OT manages one linecard and all data are isolated.
+2. When vendor OTAI library is not linked with linecard, verify that Syncd-OT cannot handle the CRUD request from OTSS.
+3. When vendor OTAI library is linked with linecard, verify that Syncd-OT cannot handle the CRUD request from OTSS.
+4. Verify that Syncd-OT can handle the create request message from OTSS, it calls vendor OTAI library create API and save data to ASIC_DB.
+5. Verify that Syncd-OT can handle the update request message from OTSS, it calls vendor OTAI library set API and update data in ASIC_DB.
+6. Verify that Syncd-OT can handle the retrieve request message from OTSS, it calls vendor OTAI library get API.
+7. Verify that Syncd-OT can handle the delete request message from OTSS, it calls vendor OTAI library remove API.
+8. Verify that Syncd-OT can sample the status, gauge and counter data with the configuration in Flexcounter database. 
+9. Verify that Syncd-OT can sample all the OTAI attributes defined in COUNTER_IDs in Flexcounter database.
+10. Verify that Syncd-OT can skip the OTAI attributes if the OTAI API returns error for this attributes at first time.
+11. Verify that Syncd-OT can accumulate the gauge and counter data within the 15 minutes and 1 day interval.
+12. Verify that Syncd-OT can calculate the average values for different gauge data, such as optical power and attenuation.
+13. Verify that the accumulate PM data validity is incomplete when the 15 minutes and 1 day window is not expired.
+14. Verify that the accumulate PM data validity is complete when the 15 minutes and 1 day window is expired.
+15. Verify that the accumulate PM data validity is invalid when any sampled data is invalid during the the 15 minutes and 1 day window.
+16. Verify that the historical PM data is saved in history database when the 15 minutes and 1 day is up.
+17. Verify that the current, 15 minutes and 1 day PM data is saved in the counter database.
+18. Verify that all the OTAI object status are sampled and update in the state_db.
+19. When linecard status changes form active to inactive, verify all the PM sampling are disabled, PM and status data are flushed.
+20. When linecard status changes form active to inactive, verify all linecard current alarm are removed except the communication failure alarm.
+21. When linecard status changes from inactive to inactive, verify all linecard and OTAI objects are created and configured again based on the data in ASIC_DB.
+22. When linecard status changes from inactive to active, verify Syncd-OT can set the `OTAI_LINECARD_ATTR_START_PRE_CONFIGURATION` attribute after linecard is created.
+23. When linecard status changes from inactive to active, verify Syncd-OT can set the `OTAI_LINECARD_ATTR_STOP_PRE_CONFIGURATION` attribute after all the other internal OTAI objects are created.
+24. After Syncd-OT create the linecard object, verify that Syncd-OT set the `OTAI_LINECARD_ATTR_COLLECT_LINECARD_ALARM` attribute to collect linecard alarms.
+25. Verify that Syncd-OT alarm notification callback is invoked when linecard alarm is generated or cleared.
+26. Verify that Syncd-OT OCM spectrum power scanning notification callback is invoked when OCM reports the spectrum power.
+27. Verify that Syncd-OT OTDR result scanning notification callback is invoked when OTDR reports the fiber scanning result.
+28. Verify that Syncd-OT OLP switch notification callback is invoked when OLP switch between different path.
+29. After restart the Syncd-OT docker container, verify all linecard and OTAI objects are created and configured again based on the data in ASIC_DB.
+30. After restart the Syncd-OT docker container, verify Syncd-OT can set the `OTAI_LINECARD_ATTR_START_PRE_CONFIGURATION` attribute after linecard is created.
+31. After restart the Syncd-OT docker container, verify Syncd-OT can set the `OTAI_LINECARD_ATTR_STOP_PRE_CONFIGURATION` attribute after all the other internal OTAI objects are created.
+32. After restart the Syncd-OT docker container, verify that Syncd-OT set the `OTAI_LINECARD_ATTR_COLLECT_LINECARD_ALARM` attribute to collect linecard alarms.
 
