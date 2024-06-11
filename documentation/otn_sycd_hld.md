@@ -116,7 +116,6 @@ OTAI defines multiple notification API functions:
 * OTAI_LINECARD_ATTR_LINECARD_OCM_SPECTRUM_POWER_NOTIFY
 * OTAI_LINECARD_ATTR_LINECARD_OTDR_RESULT_NOTIFY
 * OTAI_LINECARD_ATTR_LINECARD_STATE_CHANGE_NOTIFY
-* OTAI_LINECARD_NOTIFICATION_NAME_LINECARD_STATE_CHANGE
 
 When Syncd-OT handles the linecard creation request message in CRUD module, it assigns these notification API's callback functions to vendor's OTAI library. Once the target events are triggered in optical linecard, vendor's OTAI library can call these notification callback functions to handle these events. For example, bellow flow illustrates the alarm notification handling process.
 
@@ -130,7 +129,7 @@ When Syncd-OT handles the linecard creation request message in CRUD module, it a
 6. Vendor's OTAI library call the registered callback function `onLinecardAlarm`
 7. In the callback function `onLinecardAlarm` delete the alarm in state_db, then save the cleared alarm in the history_db with table name `HISALARM`
 
-#### linecard and Syncd-OT re-initialization
+#### 2.4 linecard and Syncd-OT re-initialization
 In the OTN system, user can restart the optical linecard and the Syncd-OT docker container, then the OTN system needs to re-initialize the Syncd-OT container and the optical linecard. For instance, recreate and configure all the optical components with the attributes in the ASIC_db, re-initialize the Flexcounter based on the configurations in FlexCounter database. 
 
 If the SYncd-OT container restart, the Syncd-OT calls the `HardReiniter` function to re-initialize all the OTAI objects and Flexcounter module. 
@@ -148,5 +147,49 @@ If the linecard reboot, the OTAI library can detect the heartbeat and trigger th
 7. In the `processOids` function, it loops all OTAI objects and calls vendor's OTAI library to recreate these objects.  
 8. After all the other OTAI objects are created, it calls vendor's OTAI library to set the other attributes.  
 9. Syncd-OT starts to reinitialize Flexcounter, it the Flexcounter groups and counter_ids from Flexcounter database  
-10. Based on these configurations in Flecounter database, it calls the FlexCounterManager to add plugins and counters.  
+10. Based on these configurations in Flexcounter database, it calls the FlexCounterManager to add plugins and counters.  
+
+
+### 3 Vendor OTAI Library
+Vendor OTAI library implements these OTAI APIs and provides Syncd-OT the ability to manage the linecard and OTAI objects. There are four sections of the OTAI APIs.
+* Initialization and unInitialization APIs  
+    OTAI library implements these APIs to initialize and uninitialize the OTAI library.
+* CRUD APIs  
+    OTAI library implements these APIs to create, update, set and delete OTAI objects;
+* Notification APIs  
+    OTAI library calls these notification callbacks to notify Syncd-OT for the status, alarms and data updates.
+* Utility APIs  
+    OTAI API utilities are used to get OTAI object type, capabilities, and change OTAI module log level.
+
+<img src="../assets/Syncd-OT_OTAI_API_Library.png" alt="Syncd-OT re-initialization.png" style="zoom: 70%;" />
+
+
+1. `otai_api_initialize()`, this function allows the Syncd to initialize any data structure that may be necessary during the subsequent OTAI operations. For example, the vendor OTAI library can get the linecard slot number with the callback function provided by `otai_api_initialize`.
+
+2. `otai_api_query()`, Syncd-OT retrieves a pointer to the C-style method table for desired OTAI functionality as specified by the given otai_api_id. Syncd-OT loops all the OTAI objects and keeps these pointers for CRUD and PM module.
+
+3. `otai_link_check()`, check whether OTAI library is linked with the target hardware. For example, if the linecard is powered off, then the link up status should be `false`. If the linecard and OTAI library communication is recovered, the link status should be `true`.
+
+
+4. `otai_create_<otai_obj>_fn()`, create a new OTAI object.
+5. `otai_set_<otai_obj>_attribute_fn()`, set OTAI object attribute.
+6. `otai_get_<otai_obj>_attribute_fn()`, get OTAI object attributes.
+7. `otai_remove_<otai_obj>_fn()`, remove an OTAI object.
+8. `otai_get_<otai_obj>_stats_fn()`, get OTAI object statistics
+9. `otai_clear_<otai_obj>_stats_fn()`, clear OTAI object statistics counters.
+    
+10. `otai_linecard_state_change_notification_fn()`, the callback function when linecard state is changed.
+11. `otai_linecard_alarm_notification_fn()`, the callback function when linecard alarm is generated or cleared.
+12. `otai_linecard_ocm_spectrum_power_notification_fn()`, the callback function when the OCM module finish spectrum power scanning and report the data.
+13. `otai_linecard_otdr_result_notification_fn()`, the callback function when the OTDR module finish fiber scanning and report the data.
+14. `otai_aps_report_switch_info_fn()`, this is a vendor extension to report the optical power during the OLP switch between different path.
+    
+15. `otai_api_uninitialize()`, uninitialize OTAI APIs.
+
+
+a. `objectTypeQuery()`, return the OTAI object type if the otai_object_id is valid, otherwise return NULL.  
+b. `otai_query_attribute_capability()`, query an attribute capability.  
+c. `otai_query_attribute_enum_values_capability()`, query an enum attribute list of implemented enum values.  
+d. `otai_object_type_get_availability()`, query an OTAI object's attributes availability.  
+e. `otai_log_set()`, set log level for an OTAI API module  
 
