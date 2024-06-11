@@ -86,13 +86,13 @@ Store counter or history database in PM data format.
 
     max         = STRING
 
-interval      = STRING
+    interval      = STRING
 
-min-time     = STRING 
+    min-time     = STRING 
 
-max-time    = STRING 
+    max-time    = STRING 
 
-Validity      = STRING
+    Validity      = STRING
 
 **E****xample****：**
 
