@@ -30,19 +30,5 @@ openconfig-cli improves this process by:
 - autogenerates click based CLI by using [SONiC CLI auto gneration tool](https://github.com/sonic-net/SONiC/blob/master/doc/cli_auto_generation/cli_auto_generation.md). As result development CLI becomes fully automated and no manul effort is required.
 - Current SONiC cli autogeneration tools only support set and show from `config-db`. [A PR](https://github.com/sonic-net/sonic-utilities/pull/3222) is submitted to enhance cli genertion tool to support show data from `state-db`.
 
-
 ## Implementation
-
-- `sonic-yanggen.py` generates sonic yang form opencofig yang and coresponding annotation yangs, including yang augmentations. There are two options provided by the script:
-    
-    - generating config container only. The generated sonic yang can be used for REST API CVL in above step 4. 
-    - generating config and state. In this case the generated sonic yang include both config and state containers and the sonic yang is used for cli autogeneration tools and cover both config and state.
-- `config` file specifies the location and openconfig yangs for CLI generation
-- `build.py` will auto genereate coresponding sonic yang, application manifest and Dockerfile and sonic-openconfig-cli docker image is built
-- Manual written CLIs can be included into openconfig-cli docker image by add the CLI python script into the `cli` directory. See `cli/show.py` for example
-
-Then sonic-openconfig-cli image is push to a docker container registry, such as doc hub or Azure docker registry. There are two ways of enbale openconfig-cli:
-- AT run-time, it can be installed on a sonic-system by [sonic package manager](https://github.com/sonic-net/sonic-utilities/blob/master/doc/Command-Reference.md#sonic-package-manager).
-- At sonic build time, the docker image is downloaded and included inot the sonic image.
-
-During loading or starting `openconfig-cli` docker, sonic cli auto-generation tool will generate cli python and plugin the new CLI to the system.
+Please see implementation in [this repository](https://github.com/jjin62/sonic-openconfig-cli).
