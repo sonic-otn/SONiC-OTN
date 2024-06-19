@@ -210,3 +210,15 @@ Validity       \= STRING
 ### Alarm Command：
 
 <img src="../assets/alarm_command.png" alt="alarm_command" style="zoom: 90%;" />
+
+### 3 Tests
+| Test Case | Description |
+| --------- | ----------- |
+| 1         | create a new FAN/PSU PM entity object. |
+| 2         | Delete FAN/PSU PM entity object. |
+| 3         | read/write value to state DB by key. |
+| 4         | according to the states DB value of the PM entity object, a record will be generated and written into the counter or history DB every 15 minutes and every 24 hours.|
+| 5         | History DB PM data records are automatically removed once they exceed the predefined expiration period, (expiration period can be customized , Example:7 days).|
+| 6         | The alarms threshold values for add/delete/modify/read from the DB.|
+| 7         | value exceeds the alarm threshold, a alarm record is generated, stored in the current alarm DB,Record an alarm create entry into the history alarm databaseDB .|
+| 8         | value Below the alarm threshold，Clear the alarm record data stored in the current alarm DB，Record an alarm clear entry into the history alarm databaseDB.|
