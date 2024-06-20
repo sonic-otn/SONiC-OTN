@@ -16,24 +16,24 @@ This document describes the high level design of PMON in SONiC
 
 15-minute and 24-hour performance data monitoring and alarm monitoring for sonic-otn products。
 
-### Main functions：
+### 1 Main functions：
 
 *   Periodically obtain real-time data of peripherals, count and calculate the maximum, minimum, average and real-time values of 15 minutes or 24 hours of data, and save performance statistics to the counter database and history database.
     
 *   According to the real-time value and threshold value in the state database, according to the general processing alarm processing and alarm disappearance processing.。
     
 
-## Architecture Design
+### 2 Architecture Design
 
-### Framework Diagram：
+### 2.1 Framework Diagram：
 
 ![](../assets/pm_frame.png)
 
-2、Performance Module Program Processing： 
+### 2.2 Performance Module Program Processing： 
 
 <img src="../assets/flow_chart.png" alt="flow_chart" style="zoom: 90%;" />
 
-### Component Description：
+### 2.3 Component Description：
 
 PM component：
 
@@ -45,7 +45,7 @@ ALARM component：
 
 \- an alarm will be cleared when a PSU's power is dropping across the warning-suppress threshold
 
-### API Design：
+### 2.4 API Design：
 
 *   PM Instance creation API：
     
@@ -67,7 +67,7 @@ According to the value of the query state db, the maximum value, min
 
 Store counter or history database in PM data format.
 
-### DB schema for PM：
+### 2.5 DB schema for PM：
 
 *   PM information is stored in counter table:
     
@@ -98,7 +98,7 @@ Store counter or history database in PM data format.
 
 <img src="../assets/pm_example.png" alt="pm_example" style="zoom: 100%;" />
 
-### PM command:
+### 2.6 PM command:
 
 \[ccc\] show psu 1 pm 15 history 1
 
@@ -148,7 +148,7 @@ output\_voltage  2024-06-06 18:45:00  0.0 V      0.00 V  0.0 V 
 
 output\_power    2024-06-06 18:45:00  0.0 W      0.00 W  0.0 W    0.0 W    2024-06-06 18:45:04  2024-06-06 18:45:04  incomplete
 
-### DB schema for ALARM：
+### 2.7 DB schema for ALARM：
 
 *   Alarm information is stored in counter table:
     
@@ -207,7 +207,7 @@ Validity       \= STRING
 
 14) "false"
 
-### Alarm Command：
+### 2.8 Alarm Command：
 
 <img src="../assets/alarm_command.png" alt="alarm_command" style="zoom: 90%;" />
 
