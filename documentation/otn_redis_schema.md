@@ -257,7 +257,6 @@ enabled             = "true" / "false"       ; boolean
 ```
 key                      = MEDIA_CHANNEL|<index>      ; string
 ;field                    = value
-index                    = uint32
 name                     = STRING
 lower-frequency          = uint64
 upper-frequency          = uint64
@@ -267,16 +266,18 @@ super-channel-parent     = uint32
 attenuation-control-mode = STRING           ; enum: ATTENUATION_FIXED_LOSS, ATTENUATION_DYNAMIC_LOSS, ATTENUATION_DYNAMIC_LOSS_DAMPED
 source-port-name         = STRING
 dest-port-name           = STRING
+ase-control-mode    = STRING              ; identityref
+  ;ASE_ENABLED, ASE_DISABLED, AUTO_ASE_ON_FAILURE, AUTO_ASE_FAILURE_AND_RESTORE
+ase-injection-thrshold    = float64
+wait-to-restore-time = uint32 ; otn (alibaba) extension
 ```
 
+### MEDIA_CHANNEL_DISTRIBUTION
 ```
-key                  = MEDIA_CHANNEL|<index>|<lower-frequency>|<upper-frequency>      ; string
-;field                = value
-lower-frequency      = uint64
-upper-frequency      = uint64
-attenuation-value    = float64
-wait-to-restore-time = uint32
+key                  = MEDIA_CHANNEL|<index>|<lower-frequency>|<upper-frequency
+;field    = value
 target-power         = float64
+attenuation-value    = float64   ; otn (alibaba) extension
 ```
 
 ### OCM
@@ -894,10 +895,9 @@ key                 = WSS|WSS-1-<1-4>-<1-n> ; string
 
 ```
 
-### MEDIA_CHANNEL
+### MEDIA_CHANNEL_TABLE
 
 *openconfig-wavelength-router*
-
 
 ```
 key                 = MEDIA_CHANNEL|<index>    ; string
@@ -918,15 +918,15 @@ source-port-name    = STRING
 dest-port-name      = STRING
 oper-status         = STRING                ; enum: UP, DOWN
 ase-status          = STRING                ; enum: PRESENT, NOT_PRESENT
+wait-to-restore-time= uint32
 ```
 
+### MEDIA_CHANNEL_DISTRIBUTION_TABLE
 ```
-key                 = MEDIA_CHANNEL|<index>|<lower-frequency>|<upper-frequency>    ; string
-lower-frequency     = uint64
-upper-frequency     = uint64
-attenuation-value   = float64
-wait-to-restore-time= uint32
-target-power        = float64
+key                  = MEDIA_CHANNEL|<index>|<lower-frequency>|<upper-frequency
+;field    = value
+target-power         = float64
+attenuation-value    = float64   ; otn (alibaba) extension
 ```
 
 ### OCM_TABLE
