@@ -209,7 +209,7 @@ sample-interval     = uint64
 *;revision "2019-12-06" {reference "0.5.0"}*
 
 ```
-key                 = AMPLIFIER|name         ; string
+key                 = AMPLIFIER|OA-1-<slot>-<oa-number> ; 1 based
 ;feild              = value
 type                = STRING                 ; identityref: EDFA, FORWARD_RAMAN,  BACKWARD_RAMAN, HYBRID
 target-gain         = float64                ; yang decimal64, json Number
@@ -229,7 +229,7 @@ fiber-type-profile  = STRING                 ; identityref: DSF, LEAF, SSMF, TWC
 */openconfig-transport-line-protection*
 
 ```
-key                 = APS|<name>            ; string
+key                 = APS|APS-1-<slot><number>   ; 1 based
 ;field               = value
 name                = STRING
 force-to-port       = STRING
@@ -242,7 +242,7 @@ force-to-port       = STRING
 *;revision "2019-07-19" {reference "0.1.0"}*
 
 ```
-key                 = ATTENUATOR|<name>      ; string
+key                 = ATTENUATOR|VOA-1-<slot><number>    ; 1 based
 ;field               = value
 attenuation-mode    = STRING                 ; identityref
 target-output-power = float64                ; yang decimal64, json Number
@@ -287,7 +287,7 @@ attenuation-value    = float64   ; otn (alibaba) extension
 *;revision "2019-10-24" {reference "0.4.0"}*
 
 ```
-key                 = OCM|name ;leafref to platform component (OCM-1-<1-8>-<1-n>)
+key                 = OCM|OCM-1-<slot>-<number>> ;leafref to platform component (OCM-1-<1-8>-<1-n>)
 ;field               = value
 monitor-port        = STRING   ;leafref to platform component
 ```
